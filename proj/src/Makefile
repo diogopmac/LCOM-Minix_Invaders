@@ -8,7 +8,7 @@ PROG=proj
 .PATH: ${.CURDIR}/controllers/video
 
 # source code files to be compiled
-SRCS = main.c timer.c kbd.c mouse.c utils.c KBC.c
+SRCS = main.c timer.c kbd.c mouse.c utils.c KBC.c video.c
 
 # additional compilation flags
 # "-Wall -Wextra -Werror -I . -std=c11 -Wno-unused-parameter" are already set
