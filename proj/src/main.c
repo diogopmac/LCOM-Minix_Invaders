@@ -7,12 +7,14 @@
 
 extern uint8_t scancode;
 
-int (ESC_key)(){
+int (move_rectanges)(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint32_t color) {
   int ipc_status;
   message msg;
 
   uint8_t bit_no;
   if(kbd_subscribe_int(&bit_no) != 0) return 1;
+
+  if (vg_draw_rectangle(x, y, width, height, color) != 0) return 1;
 
   while(scancode != BREAK_ESC) {
     if ( (driver_receive(ANY, &msg, &ipc_status)) != 0 ) { 
@@ -24,13 +26,26 @@ int (ESC_key)(){
             case HARDWARE: 	
               if (msg.m_notify.interrupts & bit_no) { 
                   kbc_ih();
+                  if(scancode == MAKE_A) {
+                    if(vg_draw_rectangle(x, y, width, height, 0x000000) != 0) return 1;
+                    x -= 10;
+                    if(vg_draw_rectangle(x, y, width, height, color) != 0) return 1;
+                  }
+                  else if(scancode == MAKE_D) {
+                    if(vg_draw_rectangle(x, y, width, height, 0x000000) != 0) return 1;
+                    x += 10;
+                    if(vg_draw_rectangle(x, y, width, height, color) != 0) return 1;
+                  }
+                  else if(scancode == BREAK_ESC) {
+                      break;
+                  }
               }
               break;
-    }
+        }
+      }
   }
   if (kbd_unsubscribe_int() != 0) return 1;
   return 0;
-  }
 }
 
 
@@ -62,11 +77,7 @@ int(proj_main_loop)(int argc, char* argv[]) {
     if(video_map_memory(0x14A) !=0) return 1;
     if(video_set_mode(0x14A) != 0) return 1;
 
-    if(vg_draw_rectangle(100, 100, 100, 100, 0xFFFFFF) != 0) return 1;
-    if(vg_draw_rectangle(200, 200, 100, 100, 0xFFFFFF) != 0) return 1;
-    if(vg_draw_rectangle(300, 300, 100, 100, 0x51A78D) != 0) return 1;
-
-    if (ESC_key() != 0) return 1;
+    if(move_rectanges(100, 100, 50, 50, 0x00FF00)!=0) return 1;
 
     if(vg_exit() != 0) return 1;
     return 0;

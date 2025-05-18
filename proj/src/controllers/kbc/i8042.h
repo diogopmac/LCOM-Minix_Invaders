@@ -40,4 +40,9 @@
 #define FULL_IN_BUF BIT(1)
 #define FULL_OUT_BUF BIT(0)
 
+// Scancode constants
+#define MAKE_A 0x1E
+#define MAKE_D 0x20
+#define MAKE_SPACE 0x39
+
 #endif
