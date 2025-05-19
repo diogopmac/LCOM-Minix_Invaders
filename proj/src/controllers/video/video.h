@@ -5,12 +5,6 @@
 
 int (video_set_mode)(uint16_t mode);
 int (video_map_memory)(uint16_t mode);
-void (video_swap_buffer)();
-
-unsigned int (get_vertical_resolution)();
-unsigned int (get_horizontal_resolution)();
-unsigned int (get_bits_per_pixel)();
-
 
 int (vg_draw_pixel)(uint16_t x, uint16_t y, uint32_t color);
 int (vg_draw_hline)(uint16_t x, uint16_t y, uint16_t len, uint32_t color);
