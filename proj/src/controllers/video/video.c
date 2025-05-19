@@ -3,6 +3,18 @@
 
 vbe_mode_info_t info;
 static uint8_t *buffer;
+static uint8_t *double_buffer;
+static unsigned int vram_size;
+
+unsigned int (get_vertical_resolution)() {
+    return info.YResolution;
+}
+unsigned int (get_horizontal_resolution)() {
+    return info.XResolution;
+}
+unsigned int (get_bits_per_pixel)() {
+    return info.BitsPerPixel;
+}
 
 int (video_set_mode)(uint16_t mode) {
     reg86_t r;
@@ -27,7 +39,6 @@ int (video_map_memory)(uint16_t mode) {
 
     struct minix_mem_range address;
     unsigned int vram_base;
-    unsigned int vram_size;
 
     vram_base = info.PhysBasePtr;
     vram_size = info.XResolution * info.YResolution * ((info.BitsPerPixel + 7) / 8);
@@ -46,7 +57,17 @@ int (video_map_memory)(uint16_t mode) {
         return 1;
     }
 
+    double_buffer = malloc(vram_size);
+    if (double_buffer == NULL) {
+        printf("video_map_memory: malloc() failed\n");
+        return 1;
+    }
+
     return 0;
+}
+
+void (video_swap_buffer)() {
+    memcpy(buffer, double_buffer, vram_size);
 }
 
 int (vg_draw_pixel)(uint16_t x, uint16_t y, uint32_t color) {
@@ -58,7 +79,7 @@ int (vg_draw_pixel)(uint16_t x, uint16_t y, uint32_t color) {
     unsigned int bytes_per_pixel = (info.BitsPerPixel + 7) / 8;
     unsigned int offset = (y * info.XResolution + x) * bytes_per_pixel;
 
-    memcpy(&buffer[offset], &color, bytes_per_pixel);
+    memcpy(&double_buffer[offset], &color, bytes_per_pixel);
 
     return 0;
 }
