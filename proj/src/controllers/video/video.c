@@ -70,6 +70,10 @@ void (video_swap_buffer)() {
     memcpy(buffer, double_buffer, vram_size);
 }
 
+void (video_clear_buffer)() {
+    memset(double_buffer, 0, vram_size);
+}
+
 int (vg_draw_pixel)(uint16_t x, uint16_t y, uint32_t color) {
     if (x >= info.XResolution || y >= info.YResolution || x < 0 || y < 0) {
         printf("vg_draw_pixel: coordinates out of bounds\n");

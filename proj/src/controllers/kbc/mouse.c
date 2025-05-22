@@ -1,10 +1,13 @@
 #include "mouse.h"
+#include "../video/video.h"
 
 int mouse_hook_id = 2;
 
 struct packet mouse_packet;
 uint8_t mouse_byte; 
 uint8_t mouse_byte_index = 0;
+int x = 0;
+int y = 0;
 
 int (mouse_subscribe_int)(uint8_t *bit_no) {
     if (bit_no == NULL) return 1;
@@ -57,4 +60,13 @@ void (mouse_create_packet)() {
     if (mouse_packet.bytes[0] & BIT(5)) {
         mouse_packet.delta_y |= 0xFF00;
     }
+}
+
+void (mouse_update_location)() {
+    x+= mouse_packet.delta_x;
+    y-= mouse_packet.delta_y;
+    if (x < 0) x = 0;
+    if (x > 1152) x = 1152;
+    if (y < 0) y = 0;
+    if (y > 864) y = 864;
 }

@@ -6,6 +6,7 @@
 int (video_set_mode)(uint16_t mode);
 int (video_map_memory)(uint16_t mode);
 void (video_swap_buffer)();
+void (video_clear_buffer)();
 
 unsigned int (get_vertical_resolution)();
 unsigned int (get_horizontal_resolution)();

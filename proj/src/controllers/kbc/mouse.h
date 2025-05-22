@@ -15,4 +15,6 @@ void (mouse_ih)(void);
 void (mouse_place_byte)(void);
 void (mouse_create_packet)(void);
 
+void (mouse_update_location)(void);
+
 #endif
