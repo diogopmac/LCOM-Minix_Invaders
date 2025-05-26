@@ -6,6 +6,9 @@
 #include "controllers/kbc/KBC.h"
 #include "controllers/kbc/mouse.h"
 
+#include "sprites/sprite.h"
+#include "img/mouse/cursor.xpm"
+
 extern uint8_t scancode;
 extern struct packet mouse_packet;
 extern int mouse_byte_index;
@@ -13,48 +16,7 @@ extern int x;
 extern int y;
 extern unsigned int counter;
 
-int (move_rectanges)(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint32_t color) {
-  int ipc_status;
-  message msg;
-
-  uint8_t bit_no;
-  if(kbd_subscribe_int(&bit_no) != 0) return 1;
-
-  if (vg_draw_rectangle(x, y, width, height, color) != 0) return 1;
-
-  while(scancode != BREAK_ESC) {
-    if ( (driver_receive(ANY, &msg, &ipc_status)) != 0 ) { 
-        printf("Error");
-        continue;
-    }
-    if (is_ipc_notify(ipc_status)) { 
-        switch (_ENDPOINT_P(msg.m_source)) {
-            case HARDWARE: 	
-              if (msg.m_notify.interrupts & bit_no) { 
-                  kbc_ih();
-                  if(vg_draw_rectangle(x, y, width, height, 0x000000) != 0) return 1;
-                  if(scancode == MAKE_A) {
-                    x -= 10;
-                  }
-                  else if(scancode == MAKE_D) {
-                    x += 10;
-                  }
-                  else if(scancode == BREAK_ESC) {
-                      break;
-                  }
-                  if(vg_draw_rectangle(x, y, width, height, color) != 0) return 1;
-                  video_swap_buffer();
-              }
-              break;
-        }
-      }
-  }
-  if (vg_draw_rectangle(x, y, width, height, 0x000000) != 0) return 1;
-  if (kbd_unsubscribe_int() != 0) return 1;
-  return 0;
-}
-
-int (move_mouse)(uint16_t width, uint16_t height, uint32_t color) {
+int (move_mouse)() {
   int ipc_status;
   message msg;
   uint8_t mouse_bit_no, timer_bit_no;
@@ -65,9 +27,10 @@ int (move_mouse)(uint16_t width, uint16_t height, uint32_t color) {
   if (timer_subscribe_int(&timer_bit_no) != 0) return 1;
   if (timer_set_frequency(0, 30) != 0) return 1;
   
-  if (vg_draw_rectangle(x, y, width, height, color) != 0) return 1;
   bool mouse_rb = false;
   bool mouse_dirty = true;
+
+  Sprite *cursor = create_sprite(cursor_xpm);
 
   while(!mouse_rb) {
     if ( (driver_receive(ANY, &msg, &ipc_status)) != 0 ) { 
@@ -79,8 +42,8 @@ int (move_mouse)(uint16_t width, uint16_t height, uint32_t color) {
             case HARDWARE: 	
               if (msg.m_notify.interrupts & timer_bit_no) { 
                   timer_int_handler();
-                  if (counter % 2 == 0 && mouse_dirty) {
-                    if(vg_draw_rectangle(x, y, width, height, color) != 0) return 1;
+                  if (mouse_dirty) {
+                    if (draw_sprite(cursor, x, y) != 0) return 1;
                     video_swap_buffer();
                     video_clear_buffer();
                     mouse_dirty = false;
@@ -108,7 +71,6 @@ int (move_mouse)(uint16_t width, uint16_t height, uint32_t color) {
   if (mouse_unsubscribe_int() != 0) return 1;
   if(mouse_issue_cmd(MOUSE_DISABLE_DATA_REPORTING) != 0) return 1;
   if (timer_unsubscribe_int() != 0) return 1;
-  if (vg_draw_rectangle(x, y, width, height, 0x000000) != 0) return 1;
   return 0;
 }
 
@@ -138,11 +100,10 @@ int main(int argc, char *argv[]) {
 }
 
 int(proj_main_loop)(int argc, char* argv[]) {
-    if(video_map_memory(0x14A) !=0) return 1;
-    if(video_set_mode(0x14A) != 0) return 1;
+    if(video_map_memory(0x115) !=0) return 1;
+    if(video_set_mode(0x115) != 0) return 1;
 
-    if(move_mouse(10, 10, 0x00FF00)!=0) return 1;
- /*    if(move_rectanges(100, 100, 30, 30, 0x00FF00)!=0) return 1; */
+    if(move_mouse()!=0) return 1;
 
     if(vg_exit() != 0) return 1;
     return 0;

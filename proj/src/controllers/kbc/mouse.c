@@ -66,7 +66,7 @@ void (mouse_update_location)() {
     x+= mouse_packet.delta_x;
     y-= mouse_packet.delta_y;
     if (x < 0) x = 0;
-    if (x > 1152) x = 1152;
+    if (x > 800) x = 800;
     if (y < 0) y = 0;
-    if (y > 864) y = 864;
+    if (y > 600) y = 600;
 }
