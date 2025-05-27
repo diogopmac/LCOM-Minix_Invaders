@@ -5,6 +5,7 @@
 #include "../controllers/kbc/mouse.h"
 #include "../controllers/kbc/kbd.h"
 #include "cursor/cursor.h"
+#include "player/player.h"
 
 typedef enum {
     GAME_STATE_MENU,

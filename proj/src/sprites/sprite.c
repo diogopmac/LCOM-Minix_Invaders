@@ -50,3 +50,13 @@ void (destroyMenuSprites)() {
     destroy_sprite(cursor);
     // Titulo, botões, etc.
 }
+
+void (createGameSprites)(){
+    airship = create_sprite(airship_xpm);
+    // Outros sprites do jogo, inimigos, etc.
+}
+
+void (destroyGameSprites)() {
+    destroy_sprite(airship);
+    // Outros sprites do jogo, inimigos, etc.
+}

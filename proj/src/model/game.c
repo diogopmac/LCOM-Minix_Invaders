@@ -5,6 +5,7 @@ extern struct packet mouse_packet;
 extern int mouse_byte_index;
 extern unsigned int counter;
 Cursor *mouse_cursor;
+Player *player;
 
 GameState game_state = GAME_STATE_MENU;
 
@@ -50,8 +51,7 @@ int game_loop() {
                   }
                   else if (game_state == GAME_STATE_PLAYING) {
                       if (need_redraw) {
-                          if (vg_draw_rectangle(0, 0, 800, 600, 0x000000) != 0) return 1;
-                          if (vg_draw_rectangle(x, y, 50, 50, 0x00FF00) != 0) return 1;
+                          drawPlayer(player);
                           video_swap_buffer();
                           video_clear_buffer();
                           need_redraw = false;
@@ -69,7 +69,7 @@ int game_loop() {
                     mouse_dirty = true;
                     
                     if (mouse_packet.rb) {
-                      destroyCursor(mouse_cursor);
+                      destroyMenuSprites();
                       mouse_cursor = NULL;
                       mouse_dirty = false;
 
@@ -85,6 +85,10 @@ int game_loop() {
 
                       if (kbd_subscribe_int(&keyboard_bit_no) != 0) return 1;
                       kbd_subscribed = true;
+
+                      createGameSprites();
+                      player = createPlayer(400, 300, 3, 0, airship);
+
                       break;
                     }
                     else if (mouse_packet.lb) {
@@ -102,17 +106,14 @@ int game_loop() {
                   printf("Keyboard interrupt received\n");
                   kbc_ih();
                   if(scancode == MAKE_A) {
-                    printf("Left arrow pressed\n");
-                    x -= 10;
+                    playerMove(player, -10);
                     need_redraw = true;
                   }
                   else if(scancode == MAKE_D) {
-                    printf("Right arrow pressed\n");
-                    x += 10;
+                    playerMove(player, 10);
                     need_redraw = true;
                   }
                   else if (scancode == BREAK_ESC) {
-                    printf("Escape pressed\n");
                     game_state = EXIT_GAME;
                     break;
                   }
