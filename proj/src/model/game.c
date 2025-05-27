@@ -51,6 +51,8 @@ int game_loop() {
                   }
                   else if (game_state == GAME_STATE_PLAYING) {
                       if (need_redraw) {
+                          if(vg_draw_rectangle(0, 0, 200, 600, 0x0A0E30) != 0) return 1;
+                          if(vg_draw_rectangle(600, 0, 200, 600, 0x0A0E30) != 0) return 1;
                           drawPlayer(player);
                           video_swap_buffer();
                           video_clear_buffer();
@@ -87,7 +89,9 @@ int game_loop() {
                       kbd_subscribed = true;
 
                       createGameSprites();
-                      player = createPlayer(400, 300, 3, 0, airship);
+                      player = createPlayer(354, 550, 3, 0, airship);
+
+                      printf("Player created at position (%d, %d)\n", player->x, player->y);
 
                       break;
                     }

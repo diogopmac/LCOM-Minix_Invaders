@@ -32,7 +32,7 @@ void (cursor_update_location)(Cursor *cursor, struct packet *mouse_packet) {
     cursor->x+= mouse_packet->delta_x;
     cursor->y-= mouse_packet->delta_y;
     if (cursor->x < 0) cursor->x = 0;
-    if (cursor->x > 800) cursor->x = 800;
+    if (cursor->x > 800 - cursor->sprite->width) cursor->x = 800 - cursor->sprite->width; // 800 - cursor->sprite->width
     if (cursor->y < 0) cursor->y = 0;
-    if (cursor->y > 600) cursor->y = 600;
+    if (cursor->y > 600 - cursor->sprite->height) cursor->y = 600 - cursor->sprite->height; // 600 - cursor->sprite->height
 }

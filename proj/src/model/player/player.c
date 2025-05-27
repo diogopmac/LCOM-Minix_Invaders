@@ -32,7 +32,7 @@ void playerMove(Player *player, int delta_x) {
     player->x += delta_x;
 
     // Ensure the player stays within the bounds of the screen
-    if (player->x < 100) player->x = 100;
-    if (player->x > 700 - player->sprite->width) player->x = 700 - player->sprite->width;
+    if (player->x < 200) player->x = 200;
+    if (player->x > 600 - player->sprite->width) player->x = 600 - player->sprite->width;
 }
 

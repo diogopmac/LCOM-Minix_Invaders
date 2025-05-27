@@ -1,3 +1,6 @@
 **/.DS_Store
 output.txt
 trace.txt
+
+*.out
+proj
