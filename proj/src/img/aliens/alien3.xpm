@@ -1,5 +1,5 @@
 /* XPM */
-static char * alien3_xpm[] = {
+static xpm_row_t const alien3_xpm[] = {
 "38 40 18 1",
 " 	c None",
 ".	c #BFBAF0",

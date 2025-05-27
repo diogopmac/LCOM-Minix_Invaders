@@ -6,6 +6,7 @@
 #include "../controllers/kbc/kbd.h"
 #include "cursor/cursor.h"
 #include "player/player.h"
+#include "alien/alien.h"
 
 typedef enum {
     GAME_STATE_MENU,

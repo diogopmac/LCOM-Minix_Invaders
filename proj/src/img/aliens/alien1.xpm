@@ -1,5 +1,5 @@
 /* XPM */
-static char * Sem título_xpm[] = {
+static xpm_row_t const alien1_xpm[] = {
 "36 38 35 1",
 " 	c None",
 ".	c #BFBAF0",

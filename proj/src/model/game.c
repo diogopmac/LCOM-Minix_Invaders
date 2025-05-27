@@ -6,10 +6,9 @@ extern int mouse_byte_index;
 extern unsigned int counter;
 Cursor *mouse_cursor;
 Player *player;
+Alien* aliens[5];
 
 GameState game_state = GAME_STATE_MENU;
-
-int x = 400, y = 300; // Initial position of the rectangle
 
 int game_loop() {
   int ipc_status;
@@ -58,6 +57,11 @@ int game_loop() {
                           video_clear_buffer();
                           need_redraw = false;
                       }
+                      for (int i = 0; i < 5; i++) {
+                        if (aliens[i] != NULL) {
+                            drawAlien(aliens[i]);
+                        }
+                      }
                   }
               }
               if ((msg.m_notify.interrupts & mouse_bit_no)) { 
@@ -71,7 +75,8 @@ int game_loop() {
                     mouse_dirty = true;
                     
                     if (mouse_packet.rb) {
-                      destroyMenuSprites();
+                      destroyCursor(mouse_cursor);
+                      /* destroyMenuSprites(); */
                       mouse_cursor = NULL;
                       mouse_dirty = false;
 
@@ -91,7 +96,9 @@ int game_loop() {
                       createGameSprites();
                       player = createPlayer(354, 550, 3, 0, airship);
 
-                      printf("Player created at position (%d, %d)\n", player->x, player->y);
+                      for (int i = 0; i < 5; i++) {
+                        aliens[i] = createAlien(220 + i * 70, 100, 1, alien1);
+                      }
 
                       break;
                     }
@@ -107,7 +114,6 @@ int game_loop() {
                 }
               }
               if ((msg.m_notify.interrupts & keyboard_bit_no) && game_state == GAME_STATE_PLAYING) { 
-                  printf("Keyboard interrupt received\n");
                   kbc_ih();
                   if(scancode == MAKE_A) {
                     playerMove(player, -10);
@@ -118,6 +124,11 @@ int game_loop() {
                     need_redraw = true;
                   }
                   else if (scancode == BREAK_ESC) {
+                    destroyPlayer(player);
+                    for (int i = 0; i < 5; i++) {
+                      destroyAlien(aliens[i]);
+                      aliens[i] = NULL;
+                    }
                     game_state = EXIT_GAME;
                     break;
                   }
