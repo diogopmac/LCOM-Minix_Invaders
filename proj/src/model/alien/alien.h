@@ -13,5 +13,6 @@ typedef struct {
 Alien *createAlien(int x, int y, int lives, Sprite *sprite);
 void destroyAlien(Alien *alien);
 void drawAlien(Alien *alien);
-void alienMove(Alien *alien, int delta_x, int delta_y);
+// 0 - left, 1 - right, 2 - down
+void alienMove(Alien *alien, int direction);
 

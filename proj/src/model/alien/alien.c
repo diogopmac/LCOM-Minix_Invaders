@@ -27,7 +27,24 @@ void drawAlien(Alien *alien) {
     }
 }
 
-void alienMove(Alien *alien, int delta_x, int delta_y) {
+void alienMove(Alien *alien, int direction) {
+    int delta_x = 0, delta_y = 0;
+    switch (direction) {
+        case 0: // left
+            delta_x = -10;
+            break;
+        case 1: // down
+            delta_y = 10;
+            break;
+        case 2: // right
+            delta_x = 10;
+            break;
+        case 3: // down
+            delta_y = 10;
+            break;    
+        default:
+            return; // Invalid direction
+    }
     alien->x += delta_x;
     alien->y += delta_y;
 

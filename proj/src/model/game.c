@@ -4,6 +4,7 @@ extern uint8_t scancode;
 extern struct packet mouse_packet;
 extern int mouse_byte_index;
 extern unsigned int counter;
+int direction = 0; // 0 - left, 1 - down, 2 - right, 3 - down || ALIEN MOVEMENT
 Cursor *mouse_cursor;
 Player *player;
 Alien* aliens[5];
@@ -49,20 +50,29 @@ int game_loop() {
                     }
                   }
                   else if (game_state == GAME_STATE_PLAYING) {
+                      if (counter % 30 == 0) { // Move aliens every second
+                          for (int i = 0; i < 5; i++) {
+                            if (aliens[i] != NULL) {
+                              alienMove(aliens[i], direction);
+                            }
+                          }
+                          direction = (direction + 1) % 4; // Change direction
+                          need_redraw = true;
+                      }
                       if (need_redraw) {
                           if(vg_draw_rectangle(0, 0, 200, 600, 0x0A0E30) != 0) return 1;
                           if(vg_draw_rectangle(600, 0, 200, 600, 0x0A0E30) != 0) return 1;
                           drawPlayer(player);
+                          for (int i = 0; i < 5; i++) {
+                            if (aliens[i] != NULL) {
+                            drawAlien(aliens[i]);
+                            }
+                          }
                           video_swap_buffer();
                           video_clear_buffer();
                           need_redraw = false;
                       }
-                      for (int i = 0; i < 5; i++) {
-                        if (aliens[i] != NULL) {
-                            drawAlien(aliens[i]);
-                        }
-                      }
-                  }
+                    }
               }
               if ((msg.m_notify.interrupts & mouse_bit_no)) { 
                 if (game_state == GAME_STATE_MENU) {
@@ -100,6 +110,7 @@ int game_loop() {
                         aliens[i] = createAlien(220 + i * 70, 100, 1, alien1);
                       }
 
+                      need_redraw = true;
                       break;
                     }
                     else if (mouse_packet.lb) {
