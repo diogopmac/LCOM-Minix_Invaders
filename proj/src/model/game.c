@@ -19,13 +19,13 @@ int game_loop() {
   if(mouse_issue_cmd(MOUSE_ENABLE_DATA_REPORTING) != 0) return 1;
   if(mouse_subscribe_int(&mouse_bit_no) != 0) return 1;
 
-  if (kbd_subscribe_int(&keyboard_bit_no) != 0) return 1;
-
   if (timer_subscribe_int(&timer_bit_no) != 0) return 1;
   if (timer_set_frequency(0, 30) != 0) return 1;
   
   bool mouse_dirty = true;
   bool need_redraw = true;
+
+  bool kbd_subscribed = false, mouse_subscribed = true;
 
   createMenuSprites();
   mouse_cursor = createCursor(cursor);
@@ -60,7 +60,7 @@ int game_loop() {
               }
               if ((msg.m_notify.interrupts & mouse_bit_no)) { 
                 if (game_state == GAME_STATE_MENU) {
-                                      mouse_ih();
+                  mouse_ih();
                   mouse_place_byte();
                   if (mouse_byte_index == 3){
                     mouse_create_packet();
@@ -74,11 +74,17 @@ int game_loop() {
                       mouse_dirty = false;
 
                       game_state = GAME_STATE_PLAYING;
+
                       if (vg_draw_rectangle(0, 0, 800, 600, 0x000000) != 0) return 1;
                       video_swap_buffer();
                       video_clear_buffer();
 
-                      printf("Game started!\n");
+                      if (mouse_unsubscribe_int() != 0) return 1;
+                      if(mouse_issue_cmd(MOUSE_DISABLE_DATA_REPORTING) != 0) return 1;
+                      mouse_subscribed = false;
+
+                      if (kbd_subscribe_int(&keyboard_bit_no) != 0) return 1;
+                      kbd_subscribed = true;
                       break;
                     }
                     else if (mouse_packet.lb) {
@@ -115,9 +121,11 @@ int game_loop() {
         }
       }
   }
-  if (mouse_unsubscribe_int() != 0) return 1;
-  if(mouse_issue_cmd(MOUSE_DISABLE_DATA_REPORTING) != 0) return 1;
+  if (mouse_subscribed) {
+    if (mouse_unsubscribe_int() != 0) return 1;
+    if(mouse_issue_cmd(MOUSE_DISABLE_DATA_REPORTING) != 0) return 1;
+  }
+  if (kbd_subscribed) if (kbd_unsubscribe_int() != 0) return 1;
   if (timer_unsubscribe_int() != 0) return 1;
-  if (kbd_unsubscribe_int() != 0) return 1;
   return 0;
 }
