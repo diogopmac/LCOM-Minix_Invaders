@@ -40,3 +40,13 @@ void (destroy_sprite)(Sprite *sprite) {
         free(sprite);
     }
 }
+
+void (createMenuSprites)() {
+    cursor = create_sprite(cursor_xpm);
+    // Titulo, botões, etc.
+}
+
+void (destroyMenuSprites)() {
+    destroy_sprite(cursor);
+    // Titulo, botões, etc.
+}

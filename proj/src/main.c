@@ -7,7 +7,6 @@
 #include "controllers/kbc/mouse.h"
 
 #include "sprites/sprite.h"
-#include "img/mouse/cursor.xpm"
 
 extern uint8_t scancode;
 extern struct packet mouse_packet;
@@ -30,7 +29,7 @@ int (move_mouse)() {
   bool mouse_rb = false;
   bool mouse_dirty = true;
 
-  Sprite *cursor = create_sprite(cursor_xpm);
+  createMenuSprites();
 
   while(!mouse_rb) {
     if ( (driver_receive(ANY, &msg, &ipc_status)) != 0 ) { 
@@ -68,6 +67,7 @@ int (move_mouse)() {
         }
       }
   }
+  destroyMenuSprites();
   if (mouse_unsubscribe_int() != 0) return 1;
   if(mouse_issue_cmd(MOUSE_DISABLE_DATA_REPORTING) != 0) return 1;
   if (timer_unsubscribe_int() != 0) return 1;
