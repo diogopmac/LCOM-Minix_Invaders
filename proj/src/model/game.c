@@ -1,5 +1,7 @@
 #include "game.h"
 
+#define MAX_ALIENS 10
+
 extern uint8_t scancode;
 extern struct packet mouse_packet;
 extern int mouse_byte_index;
@@ -7,7 +9,7 @@ extern unsigned int counter;
 int direction = 0; // 0 - left, 1 - down, 2 - right, 3 - down || ALIEN MOVEMENT
 Cursor *mouse_cursor;
 Player *player;
-Alien* aliens[5];
+Alien* aliens[MAX_ALIENS];
 
 GameState game_state = GAME_STATE_MENU;
 
@@ -51,7 +53,7 @@ int game_loop() {
                   }
                   else if (game_state == GAME_STATE_PLAYING) {
                       if (counter % 30 == 0) { // Move aliens every second
-                          for (int i = 0; i < 5; i++) {
+                          for (int i = 0; i < MAX_ALIENS; i++) {
                             if (aliens[i] != NULL) {
                               alienMove(aliens[i], direction);
                             }
@@ -63,7 +65,7 @@ int game_loop() {
                           if(vg_draw_rectangle(0, 0, 200, 600, 0x0A0E30) != 0) return 1;
                           if(vg_draw_rectangle(600, 0, 200, 600, 0x0A0E30) != 0) return 1;
                           drawPlayer(player);
-                          for (int i = 0; i < 5; i++) {
+                          for (int i = 0; i < MAX_ALIENS; i++) {
                             if (aliens[i] != NULL) {
                             drawAlien(aliens[i]);
                             }
@@ -106,8 +108,11 @@ int game_loop() {
                       createGameSprites();
                       player = createPlayer(354, 550, 3, 0, airship);
 
-                      for (int i = 0; i < 5; i++) {
-                        aliens[i] = createAlien(220 + i * 70, 100, 1, alien1);
+                      for (int i = 0; i < 2; i++) {
+                        for (int j = 0; j < 5; j++) {
+                          if (i == 0) aliens[i * 5 + j] = createAlien(240 + j * 70, 100 + i * 50, 1, alien1);
+                          else aliens[i * 5 + j] = createAlien(260 + j * 70, 100 + i * 50, 1, alien2);
+                        }
                       }
 
                       need_redraw = true;
@@ -136,7 +141,7 @@ int game_loop() {
                   }
                   else if (scancode == BREAK_ESC) {
                     destroyPlayer(player);
-                    for (int i = 0; i < 5; i++) {
+                    for (int i = 0; i < MAX_ALIENS; i++) {
                       destroyAlien(aliens[i]);
                       aliens[i] = NULL;
                     }
