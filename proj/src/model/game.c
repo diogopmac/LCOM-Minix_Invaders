@@ -70,6 +70,11 @@ int game_loop() {
                             drawAlien(aliens[i]);
                             }
                           }
+                          for (int i = 0; i < 3; i++) {
+                            if (barriers[i] != NULL) {
+                              drawBarrier(barriers[i]);
+                            }
+                          }
                           video_swap_buffer();
                           video_clear_buffer();
                           need_redraw = false;
@@ -117,7 +122,7 @@ int game_loop() {
                       }
 
                       for (int i = 0; i < 3; i++) {
-                        barriers[i] = createBarrier(70 + i * 200, 400, 4, barrier_st0); 
+                        barriers[i] = createBarrier(70 + i * 100, 400); 
                       }
 
                       need_redraw = true;

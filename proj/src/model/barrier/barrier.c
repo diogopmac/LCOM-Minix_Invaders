@@ -1,6 +1,7 @@
 #include "barrier.h"
+#include "sprites/sprite.h"
 
-Barrier *createBarrier(int x, int y, int lives, Sprite *sprite) {
+Barrier *createBarrier(int x, int y) {
     Barrier *barrier = (Barrier *)malloc(sizeof(Barrier));
     if (barrier == NULL) {
         return NULL; // Memory allocation failed
