@@ -14,3 +14,4 @@ typedef struct {
 Barrier *createBarrier(int x, int y);
 void destroyBarrier(Barrier *barrier);
 void drawBarrier(Barrier *barrier);
+void damageBarrier(Barrier *barrier);
