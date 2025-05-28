@@ -1,6 +1,6 @@
 #include "game.h"
 
-#define MAX_ALIENS 10
+#define MAX_ALIENS 18
 
 extern uint8_t scancode;
 extern struct packet mouse_packet;
@@ -52,7 +52,7 @@ int game_loop() {
                     }
                   }
                   else if (game_state == GAME_STATE_PLAYING) {
-                      if (counter % 30 == 0) { // Move aliens every second
+                      if (counter % 60 == 0) { // Move aliens every 2 second
                           for (int i = 0; i < MAX_ALIENS; i++) {
                             if (aliens[i] != NULL) {
                               alienMove(aliens[i], direction);
@@ -62,8 +62,7 @@ int game_loop() {
                           need_redraw = true;
                       }
                       if (need_redraw) {
-                          if(vg_draw_rectangle(0, 0, 200, 600, 0x0A0E30) != 0) return 1;
-                          if(vg_draw_rectangle(600, 0, 200, 600, 0x0A0E30) != 0) return 1;
+                          if(vg_draw_rectangle(500, 0, 300, 600, 0x0A0E30) != 0) return 1;
                           drawPlayer(player);
                           for (int i = 0; i < MAX_ALIENS; i++) {
                             if (aliens[i] != NULL) {
@@ -106,12 +105,13 @@ int game_loop() {
                       kbd_subscribed = true;
 
                       createGameSprites();
-                      player = createPlayer(354, 550, 3, 0, airship);
+                      player = createPlayer(54, 550, 3, 0, airship);
 
-                      for (int i = 0; i < 2; i++) {
-                        for (int j = 0; j < 5; j++) {
-                          if (i == 0) aliens[i * 5 + j] = createAlien(240 + j * 70, 100 + i * 50, 1, alien1);
-                          else aliens[i * 5 + j] = createAlien(260 + j * 70, 100 + i * 50, 1, alien2);
+                      for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 6; j++) {
+                          if (i == 0) aliens[i * 6 + j] = createAlien(40 + j * 70, 10 + i * 50, 1, alien1);
+                          else if (i == 1) aliens[i * 6 + j] = createAlien(60 + j * 70, 10 + i * 50, 1, alien2);
+                          else aliens[i * 6 + j] = createAlien(40 + j * 70, 10 + i * 50, 1, alien3);
                         }
                       }
 
@@ -132,11 +132,11 @@ int game_loop() {
               if ((msg.m_notify.interrupts & keyboard_bit_no) && game_state == GAME_STATE_PLAYING) { 
                   kbc_ih();
                   if(scancode == MAKE_A) {
-                    playerMove(player, -10);
+                    playerMove(player, -20);
                     need_redraw = true;
                   }
                   else if(scancode == MAKE_D) {
-                    playerMove(player, 10);
+                    playerMove(player, 20);
                     need_redraw = true;
                   }
                   else if (scancode == BREAK_ESC) {

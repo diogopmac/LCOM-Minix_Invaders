@@ -48,8 +48,8 @@ void alienMove(Alien *alien, int direction) {
     alien->x += delta_x;
     alien->y += delta_y;
 
-    if (alien->x < 200) alien->x = 200;
-    if (alien->x > 600 - alien->sprite->width) alien->x = 600 - alien->sprite->width;
+    if (alien->x < 0) alien->x = 0;
+    if (alien->x > 500 - alien->sprite->width) alien->x = 500 - alien->sprite->width;
     if (alien->y < 0) alien->y = 0;
     // PODE ALTERAR
     if (alien->y > 800 - alien->sprite->height) alien->y = 800 - alien->sprite->height;
