@@ -32,7 +32,12 @@ void damageBarrier(Barrier *barrier) {
         barrier->lives--;
         if (barrier->lives <= 0) {
             destroyBarrier(barrier);
+        } else if (barrier->lives == 3) {
+            barrier->sprite = barrier_st1;
+        } else if (barrier->lives == 2) {
+            barrier->sprite = barrier_st2;
+        } else if (barrier->lives == 1) {
+            barrier->sprite = barrier_st3;
         }
-
     }
 }
