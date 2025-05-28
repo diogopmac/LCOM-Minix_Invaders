@@ -2,5 +2,4 @@
 output.txt
 trace.txt
 
-*.out
-proj
+*.o
