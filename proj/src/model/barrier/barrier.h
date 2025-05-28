@@ -7,11 +7,11 @@ typedef struct {
     int x;
     int y;
     int lives;
-    int score;
+    //int score;
     Sprite *sprite;
 } Barrier;
 
-Barrier *createBarrier(int x, int y);
+Barrier *createBarrier(int x, int y, int lives, Sprite *sprite);
 void destroyBarrier(Barrier *barrier);
 void drawBarrier(Barrier *barrier);
 void damageBarrier(Barrier *barrier);

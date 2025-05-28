@@ -10,6 +10,7 @@ int direction = 0; // 0 - left, 1 - down, 2 - right, 3 - down || ALIEN MOVEMENT
 Cursor *mouse_cursor;
 Player *player;
 Alien* aliens[MAX_ALIENS];
+Barrier *barriers[3];
 
 GameState game_state = GAME_STATE_MENU;
 
@@ -113,6 +114,10 @@ int game_loop() {
                           else if (i == 1) aliens[i * 6 + j] = createAlien(60 + j * 70, 10 + i * 50, 1, alien2);
                           else aliens[i * 6 + j] = createAlien(40 + j * 70, 10 + i * 50, 1, alien3);
                         }
+                      }
+
+                      for (int i = 0; i < 3; i++) {
+                        barriers[i] = createBarrier(70 + i * 200, 400, 4, barrier_st0); 
                       }
 
                       need_redraw = true;
