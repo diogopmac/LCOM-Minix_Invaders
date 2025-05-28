@@ -1,14 +1,14 @@
 #include "barrier.h"
 
-Barrier *createBarrier(int x, int y, int lives, Sprite *sprite) {
+Barrier *createBarrier(int x, int y) {
     Barrier *barrier = (Barrier *)malloc(sizeof(Barrier));
     if (barrier == NULL) {
         return NULL; // Memory allocation failed
     }
     barrier->x = x;
     barrier->y = y;
-    barrier->lives = lives;
-    barrier->sprite = sprite;
+    barrier->lives = 4;
+    barrier->sprite = barrier_st0;
     return barrier;
 }
 
@@ -24,5 +24,15 @@ void destroyBarrier(Barrier *barrier) {
 void drawBarrier(Barrier *barrier) {
     if (barrier != NULL && barrier->sprite != NULL) {
         draw_sprite(barrier->sprite, barrier->x, barrier->y);
+    }
+}
+
+void damageBarrier(Barrier *barrier) {
+    if (barrier != NULL) {
+        barrier->lives--;
+        if (barrier->lives <= 0) {
+            destroyBarrier(barrier);
+        }
+
     }
 }

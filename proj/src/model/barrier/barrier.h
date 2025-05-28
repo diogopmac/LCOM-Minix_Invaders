@@ -11,6 +11,6 @@ typedef struct {
     Sprite *sprite;
 } Barrier;
 
-Barrier *createBarrier(int x, int y, int lives, Sprite *sprite);
+Barrier *createBarrier(int x, int y);
 void destroyBarrier(Barrier *barrier);
 void drawBarrier(Barrier *barrier);
