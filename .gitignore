@@ -4,4 +4,4 @@ trace.txt
 .vscode
 *.o
 .gdbinit
-src/proj
+proj/src/proj
