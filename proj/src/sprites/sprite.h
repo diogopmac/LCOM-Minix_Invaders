@@ -9,6 +9,10 @@
 #include "../img/aliens/alien1.xpm"
 #include "../img/aliens/alien2.xpm"
 #include "../img/aliens/alien3.xpm"
+#include "../img/barrier/stage0.xpm"
+#include "../img/barrier/stage1.xpm"
+#include "../img/barrier/stage2.xpm"
+#include "../img/barrier/stage3.xpm"
 
 typedef struct {
     uint32_t *colors;
