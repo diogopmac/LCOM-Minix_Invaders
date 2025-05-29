@@ -81,6 +81,7 @@ int game_loop() {
                     for (int j = 0; j < MAX_ALIENS; j++) {
                       if (aliens[j] != NULL && checkCollision(projectiles[i], aliens[j])) {
                         if (damageAlien(aliens[j])) {
+                          draw_sprite(alien_explosion, aliens[j]->x, aliens[j]->y);
                           destroyAlien(aliens[j]);
                           aliens[j] = NULL;
                         }
