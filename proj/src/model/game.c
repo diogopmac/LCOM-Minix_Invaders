@@ -1,4 +1,5 @@
 #include "game.h"
+#include <stdlib.h>
 
 #define MAX_ALIENS 18
 #define MAX_PROJECTILES 100
@@ -62,19 +63,28 @@ int game_loop() {
               }
             }
             else if (game_state == GAME_STATE_PLAYING) {
-              if (counter % 60 == 0) { 
+              if (counter % 60 == 0) {
                 for (int i = 0; i < MAX_ALIENS; i++) {
                   if (aliens[i] != NULL) {
                     alienMove(aliens[i], direction);
+                    int rnd = rand() % (101);
+                    if (rnd < 100 / MAX_ALIENS) {
+                      for (int j = 0; j < MAX_PROJECTILES; j++) {
+                        if (projectiles[j] == NULL) {
+                          projectiles[j] = createProjectile((int) aliens[i]->x + (aliens[i]->sprite->width / 2) - (a_projectile->width / 2), aliens[i]->y + aliens[i]->sprite->height, 'A', a_projectile);
+                          break;
+                        }
+                      }
+                    }
                   }
                 }
-                direction = (direction + 1) % 4; 
+                direction = (direction + 1) % 4;
                 need_redraw = true;
               }
               if (cooldown > 0) {
                 cooldown--;
               }
-              if (counter % 2 == 0) { 
+              if (counter % 2 == 0) {
                 for (int i = 0; i < MAX_PROJECTILES; i++) {
                   if (projectiles[i] != NULL) {
                     projectileMove(projectiles[i]);
@@ -102,7 +112,8 @@ int game_loop() {
                       destroyProjectile(projectiles[i]);
                       projectiles[i] = NULL;
                     }
-                    else drawProjectile(projectiles[i]);
+                    else
+                      drawProjectile(projectiles[i]);
                   }
                 }
                 video_swap_buffer();
@@ -189,7 +200,7 @@ int game_loop() {
             else if (scancode == MAKE_SPACE && cooldown == 0) {
               for (int i = 0; i < MAX_PROJECTILES; i++) {
                 if (projectiles[i] == NULL) {
-                  projectiles[i] = createProjectile((int) player->x + (player->sprite->width/2) - (p_projectile->width/2), player->y - player->sprite->height, 'P', p_projectile); // later on, add velocity
+                  projectiles[i] = createProjectile((int) player->x + (player->sprite->width / 2) - (p_projectile->width / 2), player->y - player->sprite->height, 'P', p_projectile); // later on, add velocity
                   cooldown = 30;
                   need_redraw = true;
                   break;
