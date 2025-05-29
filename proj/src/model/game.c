@@ -76,7 +76,7 @@ int game_loop() {
               }
               if (counter % 2 == 0) { 
                 for (int i = 0; i < MAX_PROJECTILES; i++) {
-                  if (projectiles[i] != NULL && projectiles[i]->active) {
+                  if (projectiles[i] != NULL && projectiles[i]->active && projectiles[i]->type == 'P') {
                     projectileMove(projectiles[i]);
                     for (int j = 0; j < MAX_ALIENS; j++) {
                       if (aliens[j] != NULL && checkCollision(projectiles[i], aliens[j])) {
