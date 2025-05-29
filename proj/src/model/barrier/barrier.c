@@ -28,11 +28,12 @@ void drawBarrier(Barrier *barrier) {
     }
 }
 
-void damageBarrier(Barrier *barrier) {
+int damageBarrier(Barrier *barrier) {
     if (barrier != NULL) {
         barrier->lives--;
         if (barrier->lives <= 0) {
             destroyBarrier(barrier);
+            return 1;
         } else if (barrier->lives == 3) {
             barrier->sprite = barrier_st1;
         } else if (barrier->lives == 2) {
@@ -41,4 +42,5 @@ void damageBarrier(Barrier *barrier) {
             barrier->sprite = barrier_st3;
         }
     }
+    return 0;
 }

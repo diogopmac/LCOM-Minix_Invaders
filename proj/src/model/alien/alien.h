@@ -15,4 +15,4 @@ void destroyAlien(Alien *alien);
 void drawAlien(Alien *alien);
 // 0 - left, 1 - right, 2 - down
 void alienMove(Alien *alien, int direction);
-
+int damageAlien(Alien *alien);
