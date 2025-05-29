@@ -9,8 +9,8 @@ extern unsigned int counter;
 int direction = 0; // 0 - left, 1 - down, 2 - right, 3 - down || ALIEN MOVEMENT
 Cursor *mouse_cursor;
 Player *player;
-Alien* aliens[MAX_ALIENS];
-Barrier *barriers[3];
+Alien *aliens[MAX_ALIENS];
+Barrier *barriers[4];
 
 GameState game_state = GAME_STATE_MENU;
 
@@ -70,7 +70,7 @@ int game_loop() {
                             drawAlien(aliens[i]);
                             }
                           }
-                          for (int i = 0; i < 3; i++) {
+                          for (int i = 0; i < 4; i++) {
                             if (barriers[i] != NULL) {
                               drawBarrier(barriers[i]);
                             }
@@ -121,8 +121,8 @@ int game_loop() {
                         }
                       }
 
-                      for (int i = 0; i < 3; i++) {
-                        barriers[i] = createBarrier(70 + i * 100, 400); 
+                      for (int i = 0; i < 4; i++) {
+                        barriers[i] = createBarrier(40 + i * 125, 475);
                       }
 
                       need_redraw = true;
