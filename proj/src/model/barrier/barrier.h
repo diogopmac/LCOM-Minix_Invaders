@@ -7,7 +7,6 @@ typedef struct {
     int x;
     int y;
     int lives;
-    //int score;
     Sprite *sprite;
 } Barrier;
 
