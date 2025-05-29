@@ -43,7 +43,6 @@ int damagePlayer(Player *player) {
     if (player != NULL) {
         player->lives--;
         if (player->lives <= 0) {
-            destroyPlayer(player);
             return 1;
         }
     }
