@@ -29,6 +29,9 @@ void drawPlayer(Player *player) {
 }
 
 void playerMove(Player *player, int delta_x) {
+    if (player == NULL) {
+        return;
+    }
     player->x += delta_x;
 
     // Ensure the player stays within the bounds of the screen
@@ -36,3 +39,13 @@ void playerMove(Player *player, int delta_x) {
     if (player->x > 500 - player->sprite->width) player->x = 500 - player->sprite->width;
 }
 
+int damagePlayer(Player *player) {
+    if (player != NULL) {
+        player->lives--;
+        if (player->lives <= 0) {
+            destroyPlayer(player);
+            return 1;
+        }
+    }
+    return 0;
+}

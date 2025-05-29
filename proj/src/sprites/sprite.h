@@ -9,6 +9,7 @@
 #include "../img/aliens/alien1.xpm"
 #include "../img/aliens/alien2.xpm"
 #include "../img/aliens/alien3.xpm"
+#include "../img/aliens/alien_explosion.xpm"
 #include "../img/barrier/stage0.xpm"
 #include "../img/barrier/stage1.xpm"
 #include "../img/barrier/stage2.xpm"
@@ -25,6 +26,7 @@ Sprite *airship;
 Sprite *alien1;
 Sprite *alien2;
 Sprite *alien3;
+Sprite *alien_explosion;
 Sprite *barrier_st0;
 Sprite *barrier_st1;
 Sprite *barrier_st2;

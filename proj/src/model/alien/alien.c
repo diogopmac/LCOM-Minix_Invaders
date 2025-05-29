@@ -54,3 +54,14 @@ void alienMove(Alien *alien, int direction) {
     // PODE ALTERAR
     if (alien->y > 800 - alien->sprite->height) alien->y = 800 - alien->sprite->height;
 }
+
+int damageAlien(Alien *alien) {
+    if (alien != NULL) {
+        alien->lives--;
+        if (alien->lives <= 0) {
+            destroyAlien(alien);
+            return 1;
+        }
+    }
+    return 0;
+}
