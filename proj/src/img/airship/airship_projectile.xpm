@@ -1,5 +1,5 @@
 /* XPM */
-static char * airship_projectile_xpm[] = {
+static xpm_row_t const airship_projectile_xpm[] = {
 "10 18 5 1",
 " 	c None",
 ".	c #FF8905",

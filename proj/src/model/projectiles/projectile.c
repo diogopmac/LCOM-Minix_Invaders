@@ -1,14 +1,15 @@
 #include "projectile.h"
 
-
-Projectile *createProjectile(int x, int y, int velocity, Sprite *sprite) {
+Projectile *createProjectile(int x, int y, char type, Sprite *sprite) {
+//Projectile *createProjectile(int x, int y, int velocity, Sprite *sprite) {
     Projectile *projectile = (Projectile *)malloc(sizeof(Projectile));
     if (projectile == NULL) {
         return NULL; // Memory allocation failed
     }
     projectile->x = x;
     projectile->y = y;
-    projectile->velocity = velocity;
+    projectile->type = type;
+    //projectile->velocity = velocity;
     projectile->sprite = sprite;
     return projectile;
 }

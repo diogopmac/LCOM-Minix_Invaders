@@ -6,11 +6,12 @@
 typedef struct {
     int x;
     int y;
-    int velocity; 
+    char type; // 'A' for alien, 'P' for alien
+    //int velocity; 
     Sprite *sprite;
 } Projectile;
 
-Projectile *createProjectile(int x, int y, int velocity, Sprite *sprite);
+Projectile *createProjectile(int x, int y, char type, Sprite *sprite);
 void destroyProjectile(Projectile *projectile);
 void drawProjectile(Projectile *projectile);
 void projectileMove(Projectile *projectile, int delta_y);

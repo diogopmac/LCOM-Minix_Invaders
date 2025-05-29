@@ -6,6 +6,7 @@
 
 #include "../img/mouse/cursor.xpm"
 #include "../img/airship/airship.xpm"
+#include "../img/airship/airship_projectile.xpm"
 #include "../img/aliens/alien1.xpm"
 #include "../img/aliens/alien2.xpm"
 #include "../img/aliens/alien3.xpm"
@@ -22,6 +23,7 @@ typedef struct {
 
 Sprite *cursor;
 Sprite *airship;
+Sprite *p_projectile;
 Sprite *alien1;
 Sprite *alien2;
 Sprite *alien3;
