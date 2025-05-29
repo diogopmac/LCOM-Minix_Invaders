@@ -94,7 +94,11 @@ int game_loop() {
                 }
                 for (int i = 0; i < MAX_PROJECTILES; i++) {
                   if (projectiles[i] != NULL) {
-                    drawProjectile(projectiles[i]);
+                    if (!projectiles[i]->active) {
+                      destroyProjectile(projectiles[i]);
+                      projectiles[i] = NULL;
+                    }
+                    else drawProjectile(projectiles[i]);
                   }
                 }
                 video_swap_buffer();

@@ -11,6 +11,7 @@ Projectile *createProjectile(int x, int y, char type, Sprite *sprite) {
     projectile->type = type;
     //projectile->velocity = velocity;
     projectile->sprite = sprite;
+    projectile->active = true;
     return projectile;
 }
 
@@ -24,7 +25,7 @@ void destroyProjectile(Projectile *projectile) {
 }
 
 void drawProjectile(Projectile *projectile) {
-    if (projectile != NULL && projectile->sprite != NULL) {
+    if (projectile != NULL && projectile->active && projectile->sprite != NULL) {
         draw_sprite(projectile->sprite, projectile->x, projectile->y);
     }
 }
@@ -34,7 +35,7 @@ void projectileMove(Projectile *projectile) {
     if(projectile->type == 'P') projectile->y -= 5;
     else if (projectile->type == 'A') projectile->y += 5;
 
-    if (projectile->y < 0) projectile = NULL;
-    if (projectile->y > 600 - projectile->sprite->height) 
-        projectile = NULL;
+    if (projectile->y < 0 || 
+        projectile->y > 600 - projectile->sprite->height)
+        projectile->active = false; 
 }

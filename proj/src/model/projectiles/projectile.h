@@ -9,6 +9,7 @@ typedef struct {
     char type; // 'A' for alien, 'P' for alien
     //int velocity; 
     Sprite *sprite;
+    bool active;
 } Projectile;
 
 Projectile *createProjectile(int x, int y, char type, Sprite *sprite);
