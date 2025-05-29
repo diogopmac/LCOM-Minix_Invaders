@@ -70,6 +70,14 @@ int game_loop() {
                 direction = (direction + 1) % 4; // Change direction
                 need_redraw = true;
               }
+              if (counter % 2 == 0) { // Move projectiles every 1/6 second
+                for (int i = 0; i < MAX_PROJECTILES; i++) {
+                  if (projectiles[i] != NULL) {
+                    projectileMove(projectiles[i]);
+                  }
+                }
+                need_redraw = true;
+              }
               if (need_redraw) {
                 if (vg_draw_rectangle(500, 0, 300, 600, 0x0A0E30) != 0)
                   return 1;

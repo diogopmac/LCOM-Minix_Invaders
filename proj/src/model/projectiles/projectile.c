@@ -29,10 +29,12 @@ void drawProjectile(Projectile *projectile) {
     }
 }
 
-void projectileMove(Projectile *projectile, int delta_y) {
-    projectile->y += delta_y;
+void projectileMove(Projectile *projectile) {
+    if (projectile == NULL) return;
+    if(projectile->type == 'P') projectile->y -= 5;
+    else if (projectile->type == 'A') projectile->y += 5;
 
-    if (projectile->y < 0) projectile->y = 0;
+    if (projectile->y < 0) projectile = NULL;
     if (projectile->y > 600 - projectile->sprite->height) 
-        projectile->y = 600 - projectile->sprite->height;
+        projectile = NULL;
 }

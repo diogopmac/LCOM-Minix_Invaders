@@ -14,4 +14,4 @@ typedef struct {
 Projectile *createProjectile(int x, int y, char type, Sprite *sprite);
 void destroyProjectile(Projectile *projectile);
 void drawProjectile(Projectile *projectile);
-void projectileMove(Projectile *projectile, int delta_y);
+void projectileMove(Projectile *projectile);
