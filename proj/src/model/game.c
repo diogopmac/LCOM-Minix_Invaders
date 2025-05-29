@@ -1,7 +1,7 @@
 #include "game.h"
 
 #define MAX_ALIENS 18
-#define MAX_PROJECTILES 100 //??
+#define MAX_PROJECTILES 100
 
 extern uint8_t scancode;
 extern struct packet mouse_packet;
@@ -62,19 +62,19 @@ int game_loop() {
               }
             }
             else if (game_state == GAME_STATE_PLAYING) {
-              if (counter % 60 == 0) { // Move aliens every 2 second
+              if (counter % 60 == 0) { 
                 for (int i = 0; i < MAX_ALIENS; i++) {
                   if (aliens[i] != NULL) {
                     alienMove(aliens[i], direction);
                   }
                 }
-                direction = (direction + 1) % 4; // Change direction
+                direction = (direction + 1) % 4; 
                 need_redraw = true;
               }
               if (cooldown > 0) {
                 cooldown--;
               }
-              if (counter % 2 == 0) { // Move projectiles every 1/6 second
+              if (counter % 2 == 0) { 
                 for (int i = 0; i < MAX_PROJECTILES; i++) {
                   if (projectiles[i] != NULL) {
                     projectileMove(projectiles[i]);
