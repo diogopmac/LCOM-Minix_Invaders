@@ -2,6 +2,7 @@
 
 #include <lcom/lcf.h>
 #include "../../sprites/sprite.h"
+#include "../alien/alien.h"
 
 typedef struct {
     int x;
@@ -16,3 +17,4 @@ Projectile *createProjectile(int x, int y, char type, Sprite *sprite);
 void destroyProjectile(Projectile *projectile);
 void drawProjectile(Projectile *projectile);
 void projectileMove(Projectile *projectile);
+bool checkCollision(Projectile *projectile, Alien *alien);

@@ -76,10 +76,22 @@ int game_loop() {
               }
               if (counter % 2 == 0) { 
                 for (int i = 0; i < MAX_PROJECTILES; i++) {
-                  if (projectiles[i] != NULL) {
+                  if (projectiles[i] != NULL && projectiles[i]->active) {
                     projectileMove(projectiles[i]);
+                    for (int j = 0; j < MAX_ALIENS; j++) {
+                      if (aliens[j] != NULL && checkCollision(projectiles[i], aliens[j])) {
+                        if (damageAlien(aliens[j])) {
+                          destroyAlien(aliens[j]);
+                          aliens[j] = NULL;
+                        }
+                        destroyProjectile(projectiles[i]);
+                        projectiles[i] = NULL;
+                        goto hit;
+                      }
+                    }
                   }
                 }
+              hit:
                 need_redraw = true;
               }
               if (need_redraw) {

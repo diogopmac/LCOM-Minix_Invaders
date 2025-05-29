@@ -37,3 +37,13 @@ void projectileMove(Projectile *projectile) {
         projectile->y > 600 - projectile->sprite->height)
         projectile->active = false; 
 }
+
+bool checkCollision(Projectile *projectile, Alien *alien) {
+  if (projectile->x < alien->x + alien->sprite->width &&
+      projectile->x + projectile->sprite->width > alien->x &&
+      projectile->y < alien->y + alien->sprite->height &&
+      projectile->y + projectile->sprite->height > alien->y) {
+    return true;
+  }
+  return false;
+}
