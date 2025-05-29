@@ -1,5 +1,5 @@
 /* XPM */
-static char * exit_xpm[] = {
+static xpm_row_t const exit_xpm[] = {
 "30 16 2 1",
 " 	c None",
 ".	c #FFFFFF",

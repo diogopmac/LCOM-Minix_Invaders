@@ -43,6 +43,9 @@ void (destroy_sprite)(Sprite *sprite) {
 
 void (createMenuSprites)() {
     cursor = create_sprite(cursor_xpm);
+    play = create_sprite(play_xpm);
+    leaderboard = create_sprite(leaderboard_xpm);
+    exit = create_sprite(exit_xpm);
     // Titulo, botões, etc.
 }
 

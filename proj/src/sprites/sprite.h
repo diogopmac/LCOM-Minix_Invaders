@@ -16,6 +16,9 @@
 #include "../img/barrier/stage2.xpm"
 #include "../img/barrier/stage3.xpm"
 #include "../img/aliens/alien_shoot.xpm"
+#include "../img/menu/play.xpm"
+#include "../img/menu/leaderboard.xpm"
+#include "../img/menu/exit.xpm"
 
 typedef struct {
     uint32_t *colors;
@@ -35,6 +38,9 @@ Sprite *barrier_st0;
 Sprite *barrier_st1;
 Sprite *barrier_st2;
 Sprite *barrier_st3;
+Sprite *play;
+Sprite *leaderboard;
+Sprite *exit;
 
 Sprite * (create_sprite)(xpm_map_t xpm);
 int (draw_sprite)(Sprite *sprite, uint16_t x, uint16_t y);
