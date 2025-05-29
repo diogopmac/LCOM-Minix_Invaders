@@ -8,6 +8,7 @@ extern struct packet mouse_packet;
 extern int mouse_byte_index;
 extern unsigned int counter;
 int direction = 0; // 0 - left, 1 - down, 2 - right, 3 - down || ALIEN MOVEMENT
+int player_delta = 0;
 Cursor *mouse_cursor;
 Player *player;
 Alien *aliens[MAX_ALIENS];
@@ -75,6 +76,9 @@ int game_loop() {
                 cooldown--;
               }
               if (counter % 2 == 0) { 
+                if (player != NULL) {
+                  playerMove(player, player_delta);
+                }
                 for (int i = 0; i < MAX_PROJECTILES; i++) {
                   if (projectiles[i] != NULL && projectiles[i]->active && projectiles[i]->type == 'P') {
                     projectileMove(projectiles[i]);
@@ -192,11 +196,15 @@ int game_loop() {
           if ((msg.m_notify.interrupts & keyboard_bit_no) && game_state == GAME_STATE_PLAYING) {
             kbc_ih();
             if (scancode == MAKE_A) {
-              playerMove(player, -20);
+              player_delta = -8;
               need_redraw = true;
             }
             else if (scancode == MAKE_D) {
-              playerMove(player, 20);
+              player_delta = 8;
+              need_redraw = true;
+            }
+            else if (scancode == BREAK_A || scancode == BREAK_D) {
+              player_delta = 0;
               need_redraw = true;
             }
             else if (scancode == MAKE_SPACE && cooldown == 0) {

@@ -45,4 +45,7 @@
 #define MAKE_D 0x20
 #define MAKE_SPACE 0x39
 
+#define BREAK_A 0x9E
+#define BREAK_D 0xA0
+
 #endif
