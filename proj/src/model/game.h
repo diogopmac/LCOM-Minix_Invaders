@@ -8,6 +8,7 @@
 #include "player/player.h"
 #include "alien/alien.h"
 #include "barrier/barrier.h"
+#include "projectiles/projectile.h"
 
 typedef enum {
     GAME_STATE_MENU,

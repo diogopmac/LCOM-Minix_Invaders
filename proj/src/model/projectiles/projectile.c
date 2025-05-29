@@ -1,15 +1,15 @@
 #include "projectile.h"
 
-
-Projectile *createProjectile(int x, int y, int velocity, Sprite *sprite) {
+Projectile *createProjectile(int x, int y, char type, Sprite *sprite) {
     Projectile *projectile = (Projectile *)malloc(sizeof(Projectile));
     if (projectile == NULL) {
-        return NULL; // Memory allocation failed
+        return NULL;
     }
     projectile->x = x;
     projectile->y = y;
-    projectile->velocity = velocity;
+    projectile->type = type;
     projectile->sprite = sprite;
+    projectile->active = true;
     return projectile;
 }
 
@@ -23,15 +23,17 @@ void destroyProjectile(Projectile *projectile) {
 }
 
 void drawProjectile(Projectile *projectile) {
-    if (projectile != NULL && projectile->sprite != NULL) {
+    if (projectile != NULL && projectile->active && projectile->sprite != NULL) {
         draw_sprite(projectile->sprite, projectile->x, projectile->y);
     }
 }
 
-void projectileMove(Projectile *projectile, int delta_y) {
-    projectile->y += delta_y;
+void projectileMove(Projectile *projectile) {
+    if (projectile == NULL) return;
+    if(projectile->type == 'P') projectile->y -= 5;
+    else if (projectile->type == 'A') projectile->y += 5;
 
-    if (projectile->y < 0) projectile->y = 0;
-    if (projectile->y > 600 - projectile->sprite->height) 
-        projectile->y = 600 - projectile->sprite->height;
+    if (projectile->y < 0 || 
+        projectile->y > 600 - projectile->sprite->height)
+        projectile->active = false; 
 }

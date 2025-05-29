@@ -53,6 +53,8 @@ void (destroyMenuSprites)() {
 
 void (createGameSprites)(){
     airship = create_sprite(airship_xpm);
+    p_projectile = create_sprite(airship_projectile_xpm);
+
     alien1 = create_sprite(alien1_xpm);
     alien2 = create_sprite(alien2_xpm);
     alien3 = create_sprite(alien3_xpm);
@@ -66,6 +68,8 @@ void (createGameSprites)(){
 
 void (destroyGameSprites)() {
     destroy_sprite(airship);
+    destroy_sprite(p_projectile);
+
     destroy_sprite(alien1);
     destroy_sprite(alien2);
     destroy_sprite(alien3);
