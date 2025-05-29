@@ -1,4 +1,5 @@
 #include "barrier.h"
+#include "sprites/sprite.h"
 
 Barrier *createBarrier(int x, int y) {
     Barrier *barrier = (Barrier *)malloc(sizeof(Barrier));
