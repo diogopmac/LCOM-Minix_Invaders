@@ -13,9 +13,10 @@ PROG=proj
 .PATH: ${.CURDIR}/model/alien
 .PATH: ${.CURDIR}/model/barrier
 .PATH: ${.CURDIR}/model/projectiles
+.PATH: ${.CURDIR}/model/entry
 
 # source code files to be compiled
-SRCS = main.c timer.c kbd.c mouse.c utils.c KBC.c video.c sprite.c cursor.c game.c player.c alien.c barrier.c projectile.c
+SRCS = main.c timer.c kbd.c mouse.c utils.c KBC.c video.c sprite.c cursor.c game.c player.c alien.c barrier.c projectile.c entry.c
 
 # additional compilation flags
 # "-Wall -Wextra -Werror -I . -std=c11 -Wno-unused-parameter" are already set
