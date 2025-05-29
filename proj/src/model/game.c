@@ -35,6 +35,7 @@ int game_loop() {
 
   bool mouse_dirty = true;
   bool need_redraw = true;
+  int cooldown = 0;
 
   bool kbd_subscribed = false, mouse_subscribed = true;
 
@@ -69,6 +70,9 @@ int game_loop() {
                 }
                 direction = (direction + 1) % 4; // Change direction
                 need_redraw = true;
+              }
+              if (cooldown > 0) {
+                cooldown--;
               }
               if (counter % 2 == 0) { // Move projectiles every 1/6 second
                 for (int i = 0; i < MAX_PROJECTILES; i++) {
@@ -182,10 +186,11 @@ int game_loop() {
               playerMove(player, 20);
               need_redraw = true;
             }
-            else if (scancode == MAKE_SPACE) {
+            else if (scancode == MAKE_SPACE && cooldown == 0) {
               for (int i = 0; i < MAX_PROJECTILES; i++) {
                 if (projectiles[i] == NULL) {
                   projectiles[i] = createProjectile((int) player->x + (player->sprite->width/2) - (p_projectile->width/2), player->y - player->sprite->height, 'P', p_projectile); // later on, add velocity
+                  cooldown = 30;
                   need_redraw = true;
                   break;
                 }
