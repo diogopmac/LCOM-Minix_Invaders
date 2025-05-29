@@ -218,6 +218,20 @@ int game_loop() {
                   need_redraw = true;
                   break;
                 }
+                else if (mouse_packet.lb && exit_entry->selected) {
+                  destroyCursor(mouse_cursor);
+                  destroyEntry(play_entry);
+                  destroyEntry(leaderboard_entry);
+                  destroyEntry(exit_entry);
+                  mouse_cursor = NULL;
+                  mouse_dirty = false;
+                  play_entry = NULL;
+                  leaderboard_entry = NULL;
+                  exit_entry = NULL;
+
+                  game_state = EXIT_GAME;
+                  break;
+                }
               }
             }
           }
