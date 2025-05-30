@@ -15,9 +15,6 @@ Projectile *createProjectile(int x, int y, char type, Sprite *sprite) {
 
 void destroyProjectile(Projectile *projectile) {
     if (projectile != NULL) {
-        if (projectile->sprite != NULL) {
-            destroy_sprite(projectile->sprite);
-        }
         free(projectile);
     }
 }
