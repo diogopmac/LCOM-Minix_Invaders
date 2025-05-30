@@ -31,3 +31,9 @@ void drawHud(Player *player) {
     draw_sprite(score_text, 510, 10);
     draw_number(player->score, 520 + score_text->width, 10);
 }
+
+void drawWave(int wave) {
+    draw_sprite(wave_text, 510, 40);
+
+    draw_number(wave, 520 + wave_text->width, 40);
+}

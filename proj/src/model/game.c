@@ -161,6 +161,7 @@ int game_redraw() {
   if (vg_draw_rectangle(500, 0, 300, 600, 0x0A0E30) != 0)
     return 1;
   drawHud(player);
+  drawWave(current_wave);
   drawPlayer(player);
   for (int i = 0; i < MAX_ALIENS; i++) {
     if (aliens[i] != NULL) {
