@@ -16,7 +16,7 @@ Player *player;
 Alien *aliens[MAX_ALIENS];
 Barrier *barriers[MAX_BARRIERS];
 Projectile *projectiles[MAX_PROJECTILES];
-Entry *play_entry, *leaderboard_entry, *exit_entry;
+Entry *logo_entry, *play_entry, *leaderboard_entry, *exit_entry;
 
 GameState game_state = GAME_STATE_MENU;
 
@@ -62,9 +62,10 @@ int game_loop() {
 
   createMenuSprites();
   mouse_cursor = createCursor(cursor);
-  play_entry = createEntry(300, 200, false, play);
-  leaderboard_entry = createEntry(300, 300, false, leaderboard);
-  exit_entry = createEntry(300, 400, false, quit);
+  logo_entry = createEntry(100, 100, false, logo);
+  play_entry = createEntry(500, 200, false, play);
+  leaderboard_entry = createEntry(500, 300, false, leaderboard);
+  exit_entry = createEntry(500, 400, false, quit);
 
   while (game_state != EXIT_GAME) {
     if ((driver_receive(ANY, &msg, &ipc_status)) != 0) {
@@ -78,6 +79,8 @@ int game_loop() {
             timer_int_handler();
             if (game_state == GAME_STATE_MENU) {
               if (mouse_dirty) {
+                if (drawEntry(logo_entry) != 0)
+                  return 1;
                 if (drawEntry(play_entry) != 0)
                   return 1;
                 if (drawEntry(leaderboard_entry) != 0)
@@ -126,6 +129,7 @@ int game_loop() {
                           draw_sprite(alien_explosion, aliens[j]->x, aliens[j]->y);
                           destroyAlien(aliens[j]);
                           aliens[j] = NULL;
+                          player->score += 10;
                         }
                         destroyProjectile(projectiles[i]);
                         projectiles[i] = NULL;
@@ -164,6 +168,7 @@ int game_loop() {
               if (need_redraw) {
                 if (vg_draw_rectangle(500, 0, 300, 600, 0x0A0E30) != 0)
                   return 1;
+                drawHud(player);
                 drawPlayer(player);
                 for (int i = 0; i < MAX_ALIENS; i++) {
                   if (aliens[i] != NULL) {

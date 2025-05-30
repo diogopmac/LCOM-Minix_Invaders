@@ -22,6 +22,21 @@
 #include "../img/menu/leaderboard_highlight.xpm"
 #include "../img/menu/exit.xpm"
 #include "../img/menu/exit_highlight.xpm"
+#include "../img/menu/logo.xpm"
+#include "../img/symbols/heart_life.xpm"
+#include "../img/symbols/heart_nolife.xpm"
+#include "../img/symbols/n0.xpm"
+#include "../img/symbols/n1.xpm"
+#include "../img/symbols/n2.xpm"
+#include "../img/symbols/n3.xpm"
+#include "../img/symbols/n4.xpm"
+#include "../img/symbols/n5.xpm"
+#include "../img/symbols/n6.xpm"
+#include "../img/symbols/n7.xpm"
+#include "../img/symbols/n8.xpm"
+#include "../img/symbols/n9.xpm"
+#include "../img/symbols/score.xpm"
+#include "../img/symbols/lives.xpm"
 
 typedef struct {
     uint32_t *colors;
@@ -41,16 +56,33 @@ Sprite *barrier_st0;
 Sprite *barrier_st1;
 Sprite *barrier_st2;
 Sprite *barrier_st3;
+Sprite *logo;
 Sprite *play;
 Sprite *leaderboard;
 Sprite *quit;
 Sprite *play_highlight;
 Sprite *leaderboard_highlight;
 Sprite *quit_highlight;
+Sprite *heart_life;
+Sprite *heart_nolife;
+Sprite *number_0;
+Sprite *number_1;
+Sprite *number_2;
+Sprite *number_3;
+Sprite *number_4;
+Sprite *number_5;
+Sprite *number_6;
+Sprite *number_7;
+Sprite *number_8;
+Sprite *number_9;
+Sprite *score_text;
+Sprite *lives_text;
 
 Sprite * (create_sprite)(xpm_map_t xpm);
 int (draw_sprite)(Sprite *sprite, uint16_t x, uint16_t y);
 void (destroy_sprite)(Sprite *sprite);
+
+Sprite *get_digit_sprite(char digit);
 
 void (createMenuSprites)();
 void (destroyMenuSprites)();
