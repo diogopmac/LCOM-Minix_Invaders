@@ -28,16 +28,16 @@ void alienMove(Alien *alien, int direction) {
     int delta_x = 0, delta_y = 0;
     switch (direction) {
         case 0: // left
-            delta_x = -10;
+            delta_x = -20;
             break;
         case 1: // down
-            delta_y = 10;
+            delta_y = 20;
             break;
         case 2: // right
-            delta_x = 10;
+            delta_x = 20;
             break;
         case 3: // down
-            delta_y = 10;
+            delta_y = 20;
             break;    
         default:
             return; // Invalid direction

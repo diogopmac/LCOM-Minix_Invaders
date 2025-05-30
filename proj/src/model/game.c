@@ -165,12 +165,7 @@ int game_redraw() {
   drawPlayer(player);
   for (int i = 0; i < MAX_ALIENS; i++) {
     if (aliens[i] != NULL) {
-      printf("Drawing alien %d at (%d, %d)\n", i, (int)aliens[i]->x, (int)aliens[i]->y);
-      if (aliens[i]->sprite != NULL) {
-        printf("Alien %d has sprite\n", i);
-      }
       drawAlien(aliens[i]);
-      printf("Alien %d drawn\n", i);
     }
   }
   for (int i = 0; i < MAX_PROJECTILES; i++) {
@@ -253,7 +248,7 @@ int game_loop() {
               game_menu();
             }
             else if (game_state == GAME_STATE_PLAYING) {
-              if (counter % 60 == 0) {
+              if (counter % 45 == 0) {
                 alien_tick();
               }
               if (cooldown > 0) {
