@@ -9,6 +9,8 @@ int current_wave = 1;
 bool wave_cleared = false;
 int wave_spawn_delay = 90; 
 
+int score = 0;
+
 extern uint8_t scancode;
 extern struct packet mouse_packet;
 extern int mouse_byte_index;
@@ -152,6 +154,7 @@ void projectile_tick() {
       projectileMove(projectiles[i]);
       if (checkCollisionPlayer(projectiles[i], player)) {
         if (damagePlayer(player)) {
+          score = player->score;
           game_over();
 
           createGameOverSprites();
@@ -161,6 +164,8 @@ void projectile_tick() {
 
           if (vg_draw_rectangle(0, 0, 800, 600, 0x000000) != 0)
             return;
+          draw_sprite(score_text, 250, 50); 
+          draw_number(score, 400, 50); 
 
           video_swap_buffer();
           video_clear_buffer();
@@ -292,21 +297,18 @@ int game_loop() {
                 if (game_state == GAME_STATE_GAME_OVER) break;
                 need_redraw = true;
               }
-              printf("Checkpoint 1\n");
               int aliens_alive = 0;
               for (int i = 0; i < MAX_ALIENS; i++) {
                 if (aliens[i] != NULL) {
                   aliens_alive++;
                 }
               }
-              printf("Checkpoint 2\n");
               if (aliens_alive == 0 && !wave_cleared) {
                 wave_cleared = true;
                 current_wave++;
                 wave_spawn_delay = 90;
                 need_redraw = true;
               }
-              printf("Checkpoint 3\n");
               if (wave_cleared && wave_spawn_delay > 0) {
                 wave_spawn_delay--;
                 if (wave_spawn_delay <= 0) {
@@ -324,6 +326,8 @@ int game_loop() {
               if (need_redraw) {
                 if (vg_draw_rectangle(0, 0, 800, 600, 0x000000) != 0)
                   return 1;
+                draw_sprite(score_text, 250, 50);
+                draw_number(score, 400, 50);    
                 drawEntry(play_entry);
                 drawEntry(exit_entry);
                 video_swap_buffer();
