@@ -58,6 +58,22 @@ void (destroyMenuSprites)() {
     // Titulo, botões, etc.
 }
 
+void (createGameOverSprites)() {
+    play = create_sprite(play_xpm);
+    play_highlight = create_sprite(play_highlight_xpm);
+    quit = create_sprite(exit_xpm);
+    quit_highlight = create_sprite(exit_highlight_xpm);
+    // Titulo, botões, etc.
+}
+
+void (destroyGameOverSprites)() {
+    destroy_sprite(play);
+    destroy_sprite(play_highlight);
+    destroy_sprite(quit);
+    destroy_sprite(quit_highlight);
+    // Titulo, botões, etc.
+}
+
 Sprite* get_digit_sprite(char digit) {
     switch (digit) {
         case 0: return number_0;
