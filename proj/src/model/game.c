@@ -398,7 +398,7 @@ int game_loop() {
                   kbd_subscribed = true;
 
                   createGameSprites();
-                  player = createPlayer(54, 550, 1, 0, airship);
+                  player = createPlayer(54, 550, 3, 0, airship);
 
                   spawnAlienWave();
 
@@ -486,8 +486,12 @@ int game_loop() {
                   need_redraw = true;
                 }
                 else if (exit_entry->selected == true) {
-                  exit_game();
+                  destroyEntry(play_entry);
+                  destroyEntry(exit_entry);
+                  play_entry = NULL;
+                  exit_entry = NULL;
                   if (unsubscribe() != 0) return 1;
+                  game_state = EXIT_GAME;
                 }
               }
             }
