@@ -91,3 +91,6 @@ void (destroyMenuSprites)();
 
 void (createGameSprites)();
 void (destroyGameSprites)();
+
+void (createGameOverSprites)();
+void (destroyGameOverSprites)();

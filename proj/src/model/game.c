@@ -48,6 +48,23 @@ void exit_game() {
   game_state = EXIT_GAME;
 }
 
+void game_over() {
+  destroyPlayer(player);
+  for (int i = 0; i < MAX_ALIENS; i++) {
+    destroyAlien(aliens[i]);
+    aliens[i] = NULL;
+  }
+  for (int i = 0; i < 4; i++) {
+    destroyBarrier(barriers[i]);
+    barriers[i] = NULL;
+  }
+  for (int i = 0; i < MAX_PROJECTILES; i++) {
+    destroyProjectile(projectiles[i]);
+    projectiles[i] = NULL;
+  }
+  game_state = GAME_STATE_GAME_OVER;
+}
+
 void spawnAlienWave(){
   for (int i = 0; i < MAX_ALIENS; i++) {
     if (aliens[i] != NULL) {
@@ -135,7 +152,20 @@ void projectile_tick() {
       projectileMove(projectiles[i]);
       if (checkCollisionPlayer(projectiles[i], player)) {
         if (damagePlayer(player)) {
-          exit_game();
+          game_over();
+
+          createGameOverSprites();
+
+          play_entry = createEntry(200, 280, true, play_highlight);
+          exit_entry = createEntry(500, 280, false, quit);
+
+          if (vg_draw_rectangle(0, 0, 800, 600, 0x000000) != 0)
+            return;
+
+          video_swap_buffer();
+          video_clear_buffer();
+
+          need_redraw = true;
           return;
         }
         destroyProjectile(projectiles[i]);
@@ -157,7 +187,7 @@ void projectile_tick() {
   }
 }
 
-int game_redraw() {
+int game_redraw() { 
   if (vg_draw_rectangle(500, 0, 300, 600, 0x0A0E30) != 0)
     return 1;
   drawHud(player);
@@ -165,12 +195,7 @@ int game_redraw() {
   drawPlayer(player);
   for (int i = 0; i < MAX_ALIENS; i++) {
     if (aliens[i] != NULL) {
-      printf("Drawing alien %d at (%d, %d)\n", i, (int)aliens[i]->x, (int)aliens[i]->y);
-      if (aliens[i]->sprite != NULL) {
-        printf("Alien %d has sprite\n", i);
-      }
       drawAlien(aliens[i]);
-      printf("Alien %d drawn\n", i);
     }
   }
   for (int i = 0; i < MAX_PROJECTILES; i++) {
@@ -264,33 +289,46 @@ int game_loop() {
                   playerMove(player, player_delta);
                 }
                 projectile_tick();
+                if (game_state == GAME_STATE_GAME_OVER) break;
                 need_redraw = true;
               }
-
+              printf("Checkpoint 1\n");
               int aliens_alive = 0;
               for (int i = 0; i < MAX_ALIENS; i++) {
                 if (aliens[i] != NULL) {
                   aliens_alive++;
                 }
               }
+              printf("Checkpoint 2\n");
               if (aliens_alive == 0 && !wave_cleared) {
                 wave_cleared = true;
                 current_wave++;
                 wave_spawn_delay = 90;
                 need_redraw = true;
               }
+              printf("Checkpoint 3\n");
               if (wave_cleared && wave_spawn_delay > 0) {
                 wave_spawn_delay--;
                 if (wave_spawn_delay <= 0) {
-                  printf("Spawning new wave\n");
                   spawnAlienWave();
-                  printf("Wave %d spawned\n", current_wave);
                   wave_cleared = false;
                   wave_spawn_delay = 90;
                 }
               }
+              printf("Checkpoint 4\n");
               if (need_redraw) {
                 if (game_redraw() != 0) return 1;
+              }
+            }
+            else if (game_state == GAME_STATE_GAME_OVER) {
+              if (need_redraw) {
+                if (vg_draw_rectangle(0, 0, 800, 600, 0x000000) != 0)
+                  return 1;
+                drawEntry(play_entry);
+                drawEntry(exit_entry);
+                video_swap_buffer();
+                video_clear_buffer();
+                need_redraw = false;
               }
             }
           }
@@ -360,7 +398,7 @@ int game_loop() {
                   kbd_subscribed = true;
 
                   createGameSprites();
-                  player = createPlayer(54, 550, 3, 0, airship);
+                  player = createPlayer(54, 550, 1, 0, airship);
 
                   spawnAlienWave();
 
@@ -388,33 +426,70 @@ int game_loop() {
               }
             }
           }
-          if ((msg.m_notify.interrupts & keyboard_bit_no) && game_state == GAME_STATE_PLAYING) {
-            kbc_ih();
-            if (scancode == MAKE_A) {
-              player_delta = -8;
-              need_redraw = true;
-            }
-            else if (scancode == MAKE_D) {
-              player_delta = 8;
-              need_redraw = true;
-            }
-            else if (scancode == BREAK_A || scancode == BREAK_D) {
-              player_delta = 0;
-              need_redraw = true;
-            }
-            else if (scancode == MAKE_SPACE && cooldown == 0) {
-              for (int i = 0; i < MAX_PROJECTILES; i++) {
-                if (projectiles[i] == NULL) {
-                  projectiles[i] = createProjectile((int) player->x + (player->sprite->width / 2) - (p_projectile->width / 2), player->y - player->sprite->height, 'P', p_projectile); // later on, add velocity
-                  cooldown = 30;
-                  need_redraw = true;
-                  break;
+          if ((msg.m_notify.interrupts & keyboard_bit_no) ) {
+            if (game_state == GAME_STATE_PLAYING) {
+              kbc_ih();
+              if (scancode == MAKE_A) {
+                player_delta = -8;
+                need_redraw = true;
+              }
+              else if (scancode == MAKE_D) {
+                player_delta = 8;
+                need_redraw = true;
+              }
+              else if (scancode == BREAK_A || scancode == BREAK_D) {
+                player_delta = 0;
+                need_redraw = true;
+              }
+              else if (scancode == MAKE_SPACE && cooldown == 0) {
+                for (int i = 0; i < MAX_PROJECTILES; i++) {
+                  if (projectiles[i] == NULL) {
+                    projectiles[i] = createProjectile((int) player->x + (player->sprite->width / 2) - (p_projectile->width / 2), player->y - player->sprite->height, 'P', p_projectile); // later on, add velocity
+                    cooldown = 30;
+                    need_redraw = true;
+                    break;
+                  }
                 }
               }
+              else if (scancode == BREAK_ESC) {
+                exit_game();
+                if (unsubscribe() != 0) return 1;
+              }
             }
-            else if (scancode == BREAK_ESC) {
-              exit_game();
-              if (unsubscribe() != 0) return 1;
+            else if (game_state == GAME_STATE_GAME_OVER) {
+              kbc_ih();
+              if (scancode == MAKE_A || scancode == MAKE_D) {
+                  toggleEntry(play_entry, play, play_highlight);
+                  toggleEntry(exit_entry, quit, quit_highlight);
+
+                  need_redraw = true;
+                }
+              else if (scancode == MAKE_SPACE) {
+                if (play_entry->selected == true) {
+                  game_state = GAME_STATE_PLAYING;
+
+                  if (vg_draw_rectangle(0, 0, 800, 600, 0x000000) != 0)
+                    return 1;
+                
+                  video_swap_buffer();
+                  video_clear_buffer();
+
+                  createGameSprites();
+                  player = createPlayer(54, 550, 3, 0, airship);
+
+                  spawnAlienWave();
+
+                  for (int i = 0; i < 4; i++) {
+                    barriers[i] = createBarrier(40 + i * 125, 475);
+                  }
+
+                  need_redraw = true;
+                }
+                else if (exit_entry->selected == true) {
+                  exit_game();
+                  if (unsubscribe() != 0) return 1;
+                }
+              }
             }
           }
           break;
