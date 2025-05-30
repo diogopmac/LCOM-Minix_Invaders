@@ -5,3 +5,4 @@
 #include "../player/player.h"
 
 void drawHud(Player *player);
+void drawWave(int wave);

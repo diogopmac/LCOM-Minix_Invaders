@@ -105,6 +105,7 @@ void (createGameSprites)(){
 
     score_text = create_sprite(score_xpm);
     lives_text = create_sprite(lives_xpm);
+    wave_text = create_sprite(wave_xpm);
     // Outros sprites do jogo, inimigos, etc.
 }
 
@@ -139,5 +140,6 @@ void (destroyGameSprites)() {
 
     destroy_sprite(score_text);
     destroy_sprite(lives_text);
+    destroy_sprite(wave_text);
     // Outros sprites do jogo, inimigos, etc.
 }
