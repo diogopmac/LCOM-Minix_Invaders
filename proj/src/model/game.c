@@ -69,6 +69,24 @@ void spawnAlienWave(){
   }
 }
 
+void game_menu() {
+  if (mouse_dirty) {
+    if (drawEntry(logo_entry) != 0)
+      return 1;
+    if (drawEntry(play_entry) != 0)
+      return 1;
+    if (drawEntry(leaderboard_entry) != 0)
+      return 1;
+    if (drawEntry(exit_entry) != 0)
+      return 1;
+    if (drawCursor(mouse_cursor) != 0)
+      return 1;
+    video_swap_buffer();
+    video_clear_buffer();
+    mouse_dirty = false;
+  }
+}
+
 int game_loop() {
   int ipc_status;
   message msg;
@@ -110,21 +128,7 @@ int game_loop() {
           if (msg.m_notify.interrupts & timer_bit_no) {
             timer_int_handler();
             if (game_state == GAME_STATE_MENU) {
-              if (mouse_dirty) {
-                if (drawEntry(logo_entry) != 0)
-                  return 1;
-                if (drawEntry(play_entry) != 0)
-                  return 1;
-                if (drawEntry(leaderboard_entry) != 0)
-                  return 1;
-                if (drawEntry(exit_entry) != 0)
-                  return 1;
-                if (drawCursor(mouse_cursor) != 0)
-                  return 1;
-                video_swap_buffer();
-                video_clear_buffer();
-                mouse_dirty = false;
-              }
+              game_menu();
             }
             else if (game_state == GAME_STATE_PLAYING) {
               if (counter % 60 == 0) {
