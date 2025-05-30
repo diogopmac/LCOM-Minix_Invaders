@@ -150,6 +150,42 @@ void projectile_tick() {
   }
 }
 
+int game_redraw() {
+  if (vg_draw_rectangle(500, 0, 300, 600, 0x0A0E30) != 0)
+    return 1;
+  drawHud(player);
+  drawPlayer(player);
+  for (int i = 0; i < MAX_ALIENS; i++) {
+    if (aliens[i] != NULL) {
+      printf("Drawing alien %d at (%d, %d)\n", i, (int)aliens[i]->x, (int)aliens[i]->y);
+      if (aliens[i]->sprite != NULL) {
+        printf("Alien %d has sprite\n", i);
+      }
+      drawAlien(aliens[i]);
+      printf("Alien %d drawn\n", i);
+    }
+  }
+  for (int i = 0; i < MAX_PROJECTILES; i++) {
+    if (projectiles[i] != NULL) {
+      if (!projectiles[i]->active) {
+        destroyProjectile(projectiles[i]);
+        projectiles[i] = NULL;
+      }
+      else
+        drawProjectile(projectiles[i]);
+    }
+  }
+  for (int i = 0; i < 4; i++) {
+    if (barriers[i] != NULL) {
+      drawBarrier(barriers[i]);
+    }
+  }
+  video_swap_buffer();
+  video_clear_buffer();
+  need_redraw = false;
+  return 0;
+}
+
 int game_loop() {
   int ipc_status;
   message msg;
@@ -231,38 +267,7 @@ int game_loop() {
                 }
               }
               if (need_redraw) {
-                if (vg_draw_rectangle(500, 0, 300, 600, 0x0A0E30) != 0)
-                  return 1;
-                drawHud(player);
-                drawPlayer(player);
-                for (int i = 0; i < MAX_ALIENS; i++) {
-                  if (aliens[i] != NULL) {
-                    printf("Drawing alien %d at (%d, %d)\n", i, (int)aliens[i]->x, (int)aliens[i]->y);
-                    if (aliens[i]->sprite != NULL) {
-                      printf("Alien %d has sprite\n", i);
-                    }
-                    drawAlien(aliens[i]);
-                    printf("Alien %d drawn\n", i);
-                  }
-                }
-                for (int i = 0; i < MAX_PROJECTILES; i++) {
-                  if (projectiles[i] != NULL) {
-                    if (!projectiles[i]->active) {
-                      destroyProjectile(projectiles[i]);
-                      projectiles[i] = NULL;
-                    }
-                    else
-                      drawProjectile(projectiles[i]);
-                  }
-                }
-                for (int i = 0; i < 4; i++) {
-                  if (barriers[i] != NULL) {
-                    drawBarrier(barriers[i]);
-                  }
-                }
-                video_swap_buffer();
-                video_clear_buffer();
-                need_redraw = false;
+                if (game_redraw() != 0) return 1;
               }
             }
           }
