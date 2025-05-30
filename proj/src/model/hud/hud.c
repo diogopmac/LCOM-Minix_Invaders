@@ -18,13 +18,16 @@ void drawHud(Player *player) {
         return;
     }
 
+    draw_sprite(lives_text, 510, 590 - lives_text->height);
+
     for (int i = 0; i < 3; i++) {
         if (i < player->lives) {
-            draw_sprite(heart_life, 510 + i * (heart_life->width + 5), 590 - heart_life->height);
+            draw_sprite(heart_life, (520 + lives_text->width) + i * (heart_life->width + 5), 590 - heart_life->height);
         } else {
-            draw_sprite(heart_nolife, 510 + i * (heart_nolife->width + 5), 590 - heart_nolife->height);
+            draw_sprite(heart_nolife, (520 + lives_text->width) + i * (heart_nolife->width + 5), 590 - heart_nolife->height);
         }
     }
 
-    draw_number(player->score, 510, 10);
+    draw_sprite(score_text, 510, 10);
+    draw_number(player->score, 520 + score_text->width, 10);
 }

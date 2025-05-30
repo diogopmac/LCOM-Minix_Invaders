@@ -102,6 +102,9 @@ void (createGameSprites)(){
     number_7 = create_sprite(n7_xpm);
     number_8 = create_sprite(n8_xpm);
     number_9 = create_sprite(n9_xpm);
+
+    score_text = create_sprite(score_xpm);
+    lives_text = create_sprite(lives_xpm);
     // Outros sprites do jogo, inimigos, etc.
 }
 
@@ -133,5 +136,8 @@ void (destroyGameSprites)() {
     destroy_sprite(number_7);
     destroy_sprite(number_8);
     destroy_sprite(number_9);
+
+    destroy_sprite(score_text);
+    destroy_sprite(lives_text);
     // Outros sprites do jogo, inimigos, etc.
 }

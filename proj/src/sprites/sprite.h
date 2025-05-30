@@ -35,6 +35,8 @@
 #include "../img/symbols/n7.xpm"
 #include "../img/symbols/n8.xpm"
 #include "../img/symbols/n9.xpm"
+#include "../img/symbols/score.xpm"
+#include "../img/symbols/lives.xpm"
 
 typedef struct {
     uint32_t *colors;
@@ -73,6 +75,8 @@ Sprite *number_6;
 Sprite *number_7;
 Sprite *number_8;
 Sprite *number_9;
+Sprite *score_text;
+Sprite *lives_text;
 
 Sprite * (create_sprite)(xpm_map_t xpm);
 int (draw_sprite)(Sprite *sprite, uint16_t x, uint16_t y);
