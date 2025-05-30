@@ -30,8 +30,8 @@ void drawProjectile(Projectile *projectile) {
 
 void projectileMove(Projectile *projectile) {
     if (projectile == NULL) return;
-    if(projectile->type == 'P') projectile->y -= 5;
-    else if (projectile->type == 'A') projectile->y += 5;
+    if(projectile->type == 'P') projectile->y -= 10;
+    else if (projectile->type == 'A') projectile->y += 10;
 
     if (projectile->y < 0 || 
         projectile->y > 600 - projectile->sprite->height)

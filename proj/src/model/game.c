@@ -160,11 +160,6 @@ int game_loop() {
                     drawAlien(aliens[i]);
                   }
                 }
-                for (int i = 0; i < 4; i++) {
-                  if (barriers[i] != NULL) {
-                    drawBarrier(barriers[i]);
-                  }
-                }
                 for (int i = 0; i < MAX_PROJECTILES; i++) {
                   if (projectiles[i] != NULL) {
                     if (!projectiles[i]->active) {
@@ -173,6 +168,11 @@ int game_loop() {
                     }
                     else
                       drawProjectile(projectiles[i]);
+                  }
+                }
+                for (int i = 0; i < 4; i++) {
+                  if (barriers[i] != NULL) {
+                    drawBarrier(barriers[i]);
                   }
                 }
                 video_swap_buffer();
