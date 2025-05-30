@@ -1,79 +1,6 @@
 #include <lcom/lcf.h>
 #include <lcom/proj.h>
-
-#include "controllers/video/video.h"
-#include "controllers/kbc/kbd.h"
-#include "controllers/kbc/KBC.h"
-#include "controllers/kbc/mouse.h"
-
-#include "sprites/sprite.h"
-#include "img/mouse/cursor.xpm"
-
-extern uint8_t scancode;
-extern struct packet mouse_packet;
-extern int mouse_byte_index;
-extern int x;
-extern int y;
-extern unsigned int counter;
-
-int (move_mouse)() {
-  int ipc_status;
-  message msg;
-  uint8_t mouse_bit_no, timer_bit_no;
-  if(mouse_issue_cmd(MOUSE_SET_STREAM_MODE) != 0) return 1;
-  if(mouse_issue_cmd(MOUSE_ENABLE_DATA_REPORTING) != 0) return 1;
-  if(mouse_subscribe_int(&mouse_bit_no) != 0) return 1;
-
-  if (timer_subscribe_int(&timer_bit_no) != 0) return 1;
-  if (timer_set_frequency(0, 30) != 0) return 1;
-  
-  bool mouse_rb = false;
-  bool mouse_dirty = true;
-
-  Sprite *cursor = create_sprite(cursor_xpm);
-
-  while(!mouse_rb) {
-    if ( (driver_receive(ANY, &msg, &ipc_status)) != 0 ) { 
-        printf("Error");
-        continue;
-    }
-    if (is_ipc_notify(ipc_status)) { 
-        switch (_ENDPOINT_P(msg.m_source)) {
-            case HARDWARE: 	
-              if (msg.m_notify.interrupts & timer_bit_no) { 
-                  timer_int_handler();
-                  if (mouse_dirty) {
-                    if (draw_sprite(cursor, x, y) != 0) return 1;
-                    video_swap_buffer();
-                    video_clear_buffer();
-                    mouse_dirty = false;
-                  }
-              }
-              if (msg.m_notify.interrupts & mouse_bit_no) { 
-                  mouse_ih();
-                  mouse_place_byte();
-                  if (mouse_byte_index == 3){
-                    mouse_create_packet();
-                    mouse_byte_index = 0;
-                    mouse_update_location();
-                    mouse_dirty = true;
-                    
-                    if (mouse_packet.rb) {
-                      mouse_rb = true;
-                      break;
-                    }
-                  }
-              }
-              break;
-        }
-      }
-  }
-  if (mouse_unsubscribe_int() != 0) return 1;
-  if(mouse_issue_cmd(MOUSE_DISABLE_DATA_REPORTING) != 0) return 1;
-  if (timer_unsubscribe_int() != 0) return 1;
-  return 0;
-}
-
+#include "model/game.h"
 
 int main(int argc, char *argv[]) {
   // sets the language of LCF messages (can be either EN-US or PT-PT)
@@ -103,7 +30,7 @@ int(proj_main_loop)(int argc, char* argv[]) {
     if(video_map_memory(0x115) !=0) return 1;
     if(video_set_mode(0x115) != 0) return 1;
 
-    if(move_mouse()!=0) return 1;
+    if (game_loop() != 0) return 1;
 
     if(vg_exit() != 0) return 1;
     return 0;
