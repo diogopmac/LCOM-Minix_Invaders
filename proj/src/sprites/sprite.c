@@ -63,6 +63,7 @@ void (createGameOverSprites)() {
     play_highlight = create_sprite(play_highlight_xpm);
     quit = create_sprite(exit_xpm);
     quit_highlight = create_sprite(exit_highlight_xpm);
+    score_text = create_sprite(score_xpm);
     // Titulo, botões, etc.
 }
 
@@ -71,6 +72,7 @@ void (destroyGameOverSprites)() {
     destroy_sprite(play_highlight);
     destroy_sprite(quit);
     destroy_sprite(quit_highlight);
+    destroy_sprite(score_text);
     // Titulo, botões, etc.
 }
 

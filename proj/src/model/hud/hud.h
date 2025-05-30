@@ -6,3 +6,4 @@
 
 void drawHud(Player *player);
 void drawWave(int wave);
+void draw_number(int number, int x, int y);
