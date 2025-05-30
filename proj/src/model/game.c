@@ -1,9 +1,13 @@
 #include "game.h"
 #include <stdlib.h>
 
-#define MAX_ALIENS 18
+#define MAX_ALIENS 24
 #define MAX_PROJECTILES 100
 #define MAX_BARRIERS 4
+
+int current_wave = 1;
+bool wave_cleared = false;
+int wave_spawn_delay = 90; 
 
 extern uint8_t scancode;
 extern struct packet mouse_packet;
@@ -35,6 +39,34 @@ void exit_game() {
     projectiles[i] = NULL;
   }
   game_state = EXIT_GAME;
+}
+
+void spawnAlienWave(){
+  for (int i = 0; i < MAX_ALIENS; i++) {
+    if (aliens[i] != NULL) {
+      destroyAlien(aliens[i]);
+      aliens[i] = NULL;
+    }
+  }
+
+  int alien_health = 1 + (current_wave / 3);
+  int iterator = 0;
+  if (current_wave < 4) {
+    iterator = current_wave;
+  } else iterator = 4;
+
+  for (int i = 0; i < iterator; i++) {
+    for (int j = 0; j < 6; j++) {
+      if (i == 0)
+        aliens[i * 6 + j] = createAlien(40 + j * 70, 10 + i * 50, alien_health, alien1);
+      else if (i == 1)
+        aliens[i * 6 + j] = createAlien(60 + j * 70, 10 + i * 50, alien_health, alien2);
+      else if (i == 2)
+        aliens[i * 6 + j] = createAlien(40 + j * 70, 10 + i * 50, alien_health, alien3);
+      else if (i == 3)
+        aliens[i * 6 + j] = createAlien(60 + j * 70, 10 + i * 50, alien_health, alien2);
+    }
+  }
 }
 
 int game_loop() {
@@ -165,6 +197,29 @@ int game_loop() {
               hit:
                 need_redraw = true;
               }
+
+              int aliens_alive = 0;
+              for (int i = 0; i < MAX_ALIENS; i++) {
+                if (aliens[i] != NULL) {
+                  aliens_alive++;
+                }
+              }
+              if (aliens_alive == 0 && !wave_cleared) {
+                wave_cleared = true;
+                current_wave++;
+                wave_spawn_delay = 90;
+                need_redraw = true;
+              }
+              if (wave_cleared && wave_spawn_delay > 0) {
+                wave_spawn_delay--;
+                if (wave_spawn_delay <= 0) {
+                  printf("Spawning new wave\n");
+                  spawnAlienWave();
+                  printf("Wave %d spawned\n", current_wave);
+                  wave_cleared = false;
+                  wave_spawn_delay = 90;
+                }
+              }
               if (need_redraw) {
                 if (vg_draw_rectangle(500, 0, 300, 600, 0x0A0E30) != 0)
                   return 1;
@@ -172,7 +227,12 @@ int game_loop() {
                 drawPlayer(player);
                 for (int i = 0; i < MAX_ALIENS; i++) {
                   if (aliens[i] != NULL) {
+                    printf("Drawing alien %d at (%d, %d)\n", i, (int)aliens[i]->x, (int)aliens[i]->y);
+                    if (aliens[i]->sprite != NULL) {
+                      printf("Alien %d has sprite\n", i);
+                    }
                     drawAlien(aliens[i]);
+                    printf("Alien %d drawn\n", i);
                   }
                 }
                 for (int i = 0; i < MAX_PROJECTILES; i++) {
@@ -264,16 +324,7 @@ int game_loop() {
                   createGameSprites();
                   player = createPlayer(54, 550, 3, 0, airship);
 
-                  for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 6; j++) {
-                      if (i == 0)
-                        aliens[i * 6 + j] = createAlien(40 + j * 70, 10 + i * 50, 1, alien1);
-                      else if (i == 1)
-                        aliens[i * 6 + j] = createAlien(60 + j * 70, 10 + i * 50, 1, alien2);
-                      else
-                        aliens[i * 6 + j] = createAlien(40 + j * 70, 10 + i * 50, 1, alien3);
-                    }
-                  }
+                  spawnAlienWave();
 
                   for (int i = 0; i < 4; i++) {
                     barriers[i] = createBarrier(40 + i * 125, 475);

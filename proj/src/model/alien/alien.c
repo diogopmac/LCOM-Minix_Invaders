@@ -14,9 +14,6 @@ Alien *createAlien(int x, int y, int lives, Sprite *sprite) {
 
 void destroyAlien(Alien *alien) {
     if (alien != NULL) {
-        if (alien->sprite != NULL) {
-            destroy_sprite(alien->sprite);
-        }
         free(alien);
     }
 }
