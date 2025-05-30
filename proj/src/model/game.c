@@ -186,6 +186,20 @@ int game_redraw() {
   return 0;
 }
 
+int unsubscribe() {
+  if (mouse_subscribed) {
+    if (mouse_unsubscribe_int() != 0)
+      return 1;
+    if (mouse_issue_cmd(MOUSE_DISABLE_DATA_REPORTING) != 0)
+      return 1;
+  }
+  if (kbd_subscribed)
+    if (kbd_unsubscribe_int() != 0)
+      return 1;
+  if (timer_unsubscribe_int() != 0)
+    return 1;
+}
+
 int game_loop() {
   int ipc_status;
   message msg;
@@ -391,24 +405,13 @@ int game_loop() {
             }
             else if (scancode == BREAK_ESC) {
               exit_game();
-              goto exit;
+              if (unsubscribe() != 0) return 1;
             }
           }
           break;
       }
     }
   }
-exit:
-  if (mouse_subscribed) {
-    if (mouse_unsubscribe_int() != 0)
-      return 1;
-    if (mouse_issue_cmd(MOUSE_DISABLE_DATA_REPORTING) != 0)
-      return 1;
-  }
-  if (kbd_subscribed)
-    if (kbd_unsubscribe_int() != 0)
-      return 1;
-  if (timer_unsubscribe_int() != 0)
-    return 1;
+  if (unsubscribe() != 0) return 1;
   return 0;
 }
