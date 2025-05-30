@@ -1,20 +1,41 @@
 #include "game.h"
+#include <stdlib.h>
 
 #define MAX_ALIENS 18
 #define MAX_PROJECTILES 100
+#define MAX_BARRIERS 4
 
 extern uint8_t scancode;
 extern struct packet mouse_packet;
 extern int mouse_byte_index;
 extern unsigned int counter;
 int direction = 0; // 0 - left, 1 - down, 2 - right, 3 - down || ALIEN MOVEMENT
+int player_delta = 0;
 Cursor *mouse_cursor;
 Player *player;
 Alien *aliens[MAX_ALIENS];
-Barrier *barriers[4];
+Barrier *barriers[MAX_BARRIERS];
 Projectile *projectiles[MAX_PROJECTILES];
+Entry *play_entry, *leaderboard_entry, *exit_entry;
 
 GameState game_state = GAME_STATE_MENU;
+
+void exit_game() {
+  destroyPlayer(player);
+  for (int i = 0; i < MAX_ALIENS; i++) {
+    destroyAlien(aliens[i]);
+    aliens[i] = NULL;
+  }
+  for (int i = 0; i < 4; i++) {
+    destroyBarrier(barriers[i]);
+    barriers[i] = NULL;
+  }
+  for (int i = 0; i < MAX_PROJECTILES; i++) {
+    destroyProjectile(projectiles[i]);
+    projectiles[i] = NULL;
+  }
+  game_state = EXIT_GAME;
+}
 
 int game_loop() {
   int ipc_status;
@@ -41,6 +62,9 @@ int game_loop() {
 
   createMenuSprites();
   mouse_cursor = createCursor(cursor);
+  play_entry = createEntry(300, 200, false, play);
+  leaderboard_entry = createEntry(300, 300, false, leaderboard);
+  exit_entry = createEntry(300, 400, false, quit);
 
   while (game_state != EXIT_GAME) {
     if ((driver_receive(ANY, &msg, &ipc_status)) != 0) {
@@ -54,6 +78,12 @@ int game_loop() {
             timer_int_handler();
             if (game_state == GAME_STATE_MENU) {
               if (mouse_dirty) {
+                if (drawEntry(play_entry) != 0)
+                  return 1;
+                if (drawEntry(leaderboard_entry) != 0)
+                  return 1;
+                if (drawEntry(exit_entry) != 0)
+                  return 1;
                 if (drawCursor(mouse_cursor) != 0)
                   return 1;
                 video_swap_buffer();
@@ -62,24 +92,73 @@ int game_loop() {
               }
             }
             else if (game_state == GAME_STATE_PLAYING) {
-              if (counter % 60 == 0) { 
+              if (counter % 60 == 0) {
                 for (int i = 0; i < MAX_ALIENS; i++) {
                   if (aliens[i] != NULL) {
                     alienMove(aliens[i], direction);
+                    int rnd = rand() % (101);
+                    if (rnd < 100 / MAX_ALIENS) {
+                      for (int j = 0; j < MAX_PROJECTILES; j++) {
+                        if (projectiles[j] == NULL) {
+                          projectiles[j] = createProjectile((int) aliens[i]->x + (aliens[i]->sprite->width / 2) - (a_projectile->width / 2), aliens[i]->y + aliens[i]->sprite->height, 'A', a_projectile);
+                          break;
+                        }
+                      }
+                    }
                   }
                 }
-                direction = (direction + 1) % 4; 
+                direction = (direction + 1) % 4;
                 need_redraw = true;
               }
               if (cooldown > 0) {
                 cooldown--;
               }
               if (counter % 2 == 0) { 
-                for (int i = 0; i < MAX_PROJECTILES; i++) {
-                  if (projectiles[i] != NULL) {
-                    projectileMove(projectiles[i]);
-                  }
+                if (player != NULL) {
+                  playerMove(player, player_delta);
                 }
+                for (int i = 0; i < MAX_PROJECTILES; i++) {
+                  if (projectiles[i] != NULL && projectiles[i]->active && projectiles[i]->type == 'P') {
+                    projectileMove(projectiles[i]);
+                    for (int j = 0; j < MAX_ALIENS; j++) {
+                      if (aliens[j] != NULL && checkCollisionAlien(projectiles[i], aliens[j])) {
+                        if (damageAlien(aliens[j])) {
+                          draw_sprite(alien_explosion, aliens[j]->x, aliens[j]->y);
+                          destroyAlien(aliens[j]);
+                          aliens[j] = NULL;
+                        }
+                        destroyProjectile(projectiles[i]);
+                        projectiles[i] = NULL;
+                        goto hit;
+                      }
+                    }
+                  }
+                  else if (projectiles[i] != NULL && projectiles[i]->active && projectiles[i]->type == 'A') {
+                    projectileMove(projectiles[i]);
+                    if (checkCollisionPlayer(projectiles[i], player)) {
+                      if (damagePlayer(player)) {
+                        exit_game();
+                        goto exit;
+                      }
+                      destroyProjectile(projectiles[i]);
+                      projectiles[i] = NULL;
+                      goto hit;
+                    }
+                    for (int j = 0; j < MAX_BARRIERS; j++) {
+                      if (barriers[j] != NULL && checkCollisionBarrier(projectiles[i], barriers[j])) {
+                        if (damageBarrier(barriers[j])) {
+                          destroyBarrier(barriers[j]);
+                          barriers[j] = NULL;
+                        }
+                        destroyProjectile(projectiles[i]);
+                        projectiles[i] = NULL;
+                        goto hit;
+                      }
+                    }
+                  }
+                  
+                }
+              hit:
                 need_redraw = true;
               }
               if (need_redraw) {
@@ -91,18 +170,19 @@ int game_loop() {
                     drawAlien(aliens[i]);
                   }
                 }
-                for (int i = 0; i < 4; i++) {
-                  if (barriers[i] != NULL) {
-                    drawBarrier(barriers[i]);
-                  }
-                }
                 for (int i = 0; i < MAX_PROJECTILES; i++) {
                   if (projectiles[i] != NULL) {
                     if (!projectiles[i]->active) {
                       destroyProjectile(projectiles[i]);
                       projectiles[i] = NULL;
                     }
-                    else drawProjectile(projectiles[i]);
+                    else
+                      drawProjectile(projectiles[i]);
+                  }
+                }
+                for (int i = 0; i < 4; i++) {
+                  if (barriers[i] != NULL) {
+                    drawBarrier(barriers[i]);
                   }
                 }
                 video_swap_buffer();
@@ -121,11 +201,43 @@ int game_loop() {
                 cursor_update_location(mouse_cursor, &mouse_packet);
                 mouse_dirty = true;
 
-                if (mouse_packet.rb) {
+                if ((play_entry->selected == false && 
+                    mouse_cursor->x >= play_entry->x && mouse_cursor->x <= play_entry->x + play_entry->sprite->width &&
+                    mouse_cursor->y >= play_entry->y && mouse_cursor->y <= play_entry->y + play_entry->sprite->height) ||
+                    (play_entry->selected == true &&
+                    (mouse_cursor->x < play_entry->x || mouse_cursor->x > play_entry->x + play_entry->sprite->width ||
+                    mouse_cursor->y < play_entry->y || mouse_cursor->y > play_entry->y + play_entry->sprite->height))) {
+                  toggleEntry(play_entry, play, play_highlight);
+                } 
+
+                if ((leaderboard_entry->selected == false && 
+                    mouse_cursor->x >= leaderboard_entry->x && mouse_cursor->x <= leaderboard_entry->x + leaderboard_entry->sprite->width &&
+                    mouse_cursor->y >= leaderboard_entry->y && mouse_cursor->y <= leaderboard_entry->y + leaderboard_entry->sprite->height) ||
+                    (leaderboard_entry->selected == true &&
+                    (mouse_cursor->x < leaderboard_entry->x || mouse_cursor->x > leaderboard_entry->x + leaderboard_entry->sprite->width ||
+                    mouse_cursor->y < leaderboard_entry->y || mouse_cursor->y > leaderboard_entry->y + leaderboard_entry->sprite->height))) {
+                  toggleEntry(leaderboard_entry, leaderboard, leaderboard_highlight);
+                }
+
+                if ((exit_entry->selected == false && 
+                    mouse_cursor->x >= exit_entry->x && mouse_cursor->x <= exit_entry->x + exit_entry->sprite->width &&
+                    mouse_cursor->y >= exit_entry->y && mouse_cursor->y <= exit_entry->y + exit_entry->sprite->height) ||
+                    (exit_entry->selected == true &&
+                    (mouse_cursor->x < exit_entry->x || mouse_cursor->x > exit_entry->x + exit_entry->sprite->width ||
+                    mouse_cursor->y < exit_entry->y || mouse_cursor->y > exit_entry->y + exit_entry->sprite->height))) {
+                  toggleEntry(exit_entry, quit, quit_highlight);
+                }
+
+                if (mouse_packet.lb && play_entry->selected) {
                   destroyCursor(mouse_cursor);
-                  /* destroyMenuSprites(); */
+                  destroyEntry(play_entry);
+                  destroyEntry(leaderboard_entry);
+                  destroyEntry(exit_entry);
                   mouse_cursor = NULL;
                   mouse_dirty = false;
+                  play_entry = NULL;
+                  leaderboard_entry = NULL;
+                  exit_entry = NULL;
 
                   game_state = GAME_STATE_PLAYING;
 
@@ -165,10 +277,16 @@ int game_loop() {
                   need_redraw = true;
                   break;
                 }
-                else if (mouse_packet.lb) {
+                else if (mouse_packet.lb && exit_entry->selected) {
                   destroyCursor(mouse_cursor);
+                  destroyEntry(play_entry);
+                  destroyEntry(leaderboard_entry);
+                  destroyEntry(exit_entry);
                   mouse_cursor = NULL;
                   mouse_dirty = false;
+                  play_entry = NULL;
+                  leaderboard_entry = NULL;
+                  exit_entry = NULL;
 
                   game_state = EXIT_GAME;
                   break;
@@ -179,17 +297,21 @@ int game_loop() {
           if ((msg.m_notify.interrupts & keyboard_bit_no) && game_state == GAME_STATE_PLAYING) {
             kbc_ih();
             if (scancode == MAKE_A) {
-              playerMove(player, -20);
+              player_delta = -8;
               need_redraw = true;
             }
             else if (scancode == MAKE_D) {
-              playerMove(player, 20);
+              player_delta = 8;
+              need_redraw = true;
+            }
+            else if (scancode == BREAK_A || scancode == BREAK_D) {
+              player_delta = 0;
               need_redraw = true;
             }
             else if (scancode == MAKE_SPACE && cooldown == 0) {
               for (int i = 0; i < MAX_PROJECTILES; i++) {
                 if (projectiles[i] == NULL) {
-                  projectiles[i] = createProjectile((int) player->x + (player->sprite->width/2) - (p_projectile->width/2), player->y - player->sprite->height, 'P', p_projectile); // later on, add velocity
+                  projectiles[i] = createProjectile((int) player->x + (player->sprite->width / 2) - (p_projectile->width / 2), player->y - player->sprite->height, 'P', p_projectile); // later on, add velocity
                   cooldown = 30;
                   need_redraw = true;
                   break;
@@ -197,27 +319,15 @@ int game_loop() {
               }
             }
             else if (scancode == BREAK_ESC) {
-              destroyPlayer(player);
-              for (int i = 0; i < MAX_ALIENS; i++) {
-                destroyAlien(aliens[i]);
-                aliens[i] = NULL;
-              }
-              for (int i = 0; i < 4; i++) {
-                destroyBarrier(barriers[i]);
-                barriers[i] = NULL;
-              }
-              for (int i = 0; i < MAX_PROJECTILES; i++) {
-                destroyProjectile(projectiles[i]);
-                projectiles[i] = NULL;
-              }
-              game_state = EXIT_GAME;
-              break;
+              exit_game();
+              goto exit;
             }
           }
           break;
       }
     }
   }
+exit:
   if (mouse_subscribed) {
     if (mouse_unsubscribe_int() != 0)
       return 1;

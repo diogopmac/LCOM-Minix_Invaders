@@ -16,4 +16,4 @@ void destroyPlayer(Player *player);
 void drawPlayer(Player *player);
 
 void playerMove(Player *player, int delta_x);
-void playerDamage(Player *player);
+int damagePlayer(Player *player);

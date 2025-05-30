@@ -32,7 +32,6 @@ int damageBarrier(Barrier *barrier) {
     if (barrier != NULL) {
         barrier->lives--;
         if (barrier->lives <= 0) {
-            destroyBarrier(barrier);
             return 1;
         } else if (barrier->lives == 3) {
             barrier->sprite = barrier_st1;

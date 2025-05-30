@@ -43,6 +43,12 @@ void (destroy_sprite)(Sprite *sprite) {
 
 void (createMenuSprites)() {
     cursor = create_sprite(cursor_xpm);
+    play = create_sprite(play_xpm);
+    play_highlight = create_sprite(play_highlight_xpm);
+    leaderboard = create_sprite(leaderboard_xpm);
+    leaderboard_highlight = create_sprite(leaderboard_highlight_xpm);
+    quit = create_sprite(exit_xpm);
+    quit_highlight = create_sprite(exit_highlight_xpm);
     // Titulo, botões, etc.
 }
 
@@ -59,6 +65,7 @@ void (createGameSprites)(){
     alien2 = create_sprite(alien2_xpm);
     alien3 = create_sprite(alien3_xpm);
     alien_explosion = create_sprite(alien_explosion_xpm);
+    a_projectile = create_sprite(alien_projectile_xpm);
 
     barrier_st0 = create_sprite(stage0_xpm);
     barrier_st1 = create_sprite(stage1_xpm);
@@ -75,6 +82,7 @@ void (destroyGameSprites)() {
     destroy_sprite(alien2);
     destroy_sprite(alien3);
     destroy_sprite(alien_explosion);
+    destroy_sprite(a_projectile);
 
     destroy_sprite(barrier_st0);
     destroy_sprite(barrier_st1);
