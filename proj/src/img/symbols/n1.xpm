@@ -1,5 +1,5 @@
 /* XPM */
-static char * n1_xpm[] = {
+static xpm_row_t const n1_xpm[] = {
 "6 14 2 1",
 " 	c None",
 ".	c #FFFFFF",

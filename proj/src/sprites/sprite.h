@@ -16,6 +16,18 @@
 #include "../img/barrier/stage2.xpm"
 #include "../img/barrier/stage3.xpm"
 #include "../img/aliens/alien_shoot.xpm"
+#include "../img/symbols/heart_life.xpm"
+#include "../img/symbols/heart_nolife.xpm"
+#include "../img/symbols/n0.xpm"
+#include "../img/symbols/n1.xpm"
+#include "../img/symbols/n2.xpm"
+#include "../img/symbols/n3.xpm"
+#include "../img/symbols/n4.xpm"
+#include "../img/symbols/n5.xpm"
+#include "../img/symbols/n6.xpm"
+#include "../img/symbols/n7.xpm"
+#include "../img/symbols/n8.xpm"
+#include "../img/symbols/n9.xpm"
 
 typedef struct {
     uint32_t *colors;
@@ -35,10 +47,24 @@ Sprite *barrier_st0;
 Sprite *barrier_st1;
 Sprite *barrier_st2;
 Sprite *barrier_st3;
+Sprite *heart_life;
+Sprite *heart_nolife;
+Sprite *number_0;
+Sprite *number_1;
+Sprite *number_2;
+Sprite *number_3;
+Sprite *number_4;
+Sprite *number_5;
+Sprite *number_6;
+Sprite *number_7;
+Sprite *number_8;
+Sprite *number_9;
 
 Sprite * (create_sprite)(xpm_map_t xpm);
 int (draw_sprite)(Sprite *sprite, uint16_t x, uint16_t y);
 void (destroy_sprite)(Sprite *sprite);
+
+Sprite *get_digit_sprite(char digit);
 
 void (createMenuSprites)();
 void (destroyMenuSprites)();

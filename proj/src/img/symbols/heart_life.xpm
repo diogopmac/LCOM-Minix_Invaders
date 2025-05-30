@@ -1,5 +1,5 @@
 /* XPM */
-static char * heart_life_xpm[] = {
+static xpm_row_t const heart_life_xpm[] = {
 "30 26 6 1",
 " 	c None",
 ".	c #370B44",

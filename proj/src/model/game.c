@@ -116,6 +116,7 @@ int game_loop() {
                           draw_sprite(alien_explosion, aliens[j]->x, aliens[j]->y);
                           destroyAlien(aliens[j]);
                           aliens[j] = NULL;
+                          player->score += 10;
                         }
                         destroyProjectile(projectiles[i]);
                         projectiles[i] = NULL;
@@ -154,6 +155,7 @@ int game_loop() {
               if (need_redraw) {
                 if (vg_draw_rectangle(500, 0, 300, 600, 0x0A0E30) != 0)
                   return 1;
+                drawHud(player);
                 drawPlayer(player);
                 for (int i = 0; i < MAX_ALIENS; i++) {
                   if (aliens[i] != NULL) {
