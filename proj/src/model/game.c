@@ -13,8 +13,15 @@ extern uint8_t scancode;
 extern struct packet mouse_packet;
 extern int mouse_byte_index;
 extern unsigned int counter;
+
+bool mouse_dirty;
+bool need_redraw;
+bool mouse_subscribed;
+bool kbd_subscribed;
+
 int direction = 0; // 0 - left, 1 - down, 2 - right, 3 - down || ALIEN MOVEMENT
 int player_delta = 0;
+
 Cursor *mouse_cursor;
 Player *player;
 Alien *aliens[MAX_ALIENS];
@@ -72,15 +79,15 @@ void spawnAlienWave(){
 void game_menu() {
   if (mouse_dirty) {
     if (drawEntry(logo_entry) != 0)
-      return 1;
+      return;
     if (drawEntry(play_entry) != 0)
-      return 1;
+      return;
     if (drawEntry(leaderboard_entry) != 0)
-      return 1;
+      return;
     if (drawEntry(exit_entry) != 0)
-      return 1;
+      return;
     if (drawCursor(mouse_cursor) != 0)
-      return 1;
+      return;
     video_swap_buffer();
     video_clear_buffer();
     mouse_dirty = false;
@@ -198,6 +205,7 @@ int unsubscribe() {
       return 1;
   if (timer_unsubscribe_int() != 0)
     return 1;
+  return 0;
 }
 
 int game_loop() {
@@ -217,8 +225,8 @@ int game_loop() {
   if (timer_set_frequency(0, 30) != 0)
     return 1;
 
-  bool mouse_dirty = true;
-  bool need_redraw = true;
+  mouse_dirty = true;
+  need_redraw = true;
   int cooldown = 0;
 
   bool kbd_subscribed = false, mouse_subscribed = true;
@@ -412,6 +420,5 @@ int game_loop() {
       }
     }
   }
-  if (unsubscribe() != 0) return 1;
   return 0;
 }
