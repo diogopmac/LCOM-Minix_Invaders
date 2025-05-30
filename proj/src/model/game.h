@@ -9,6 +9,7 @@
 #include "alien/alien.h"
 #include "barrier/barrier.h"
 #include "projectiles/projectile.h"
+#include "entry/entry.h"
 #include "hud/hud.h"
 
 typedef enum {

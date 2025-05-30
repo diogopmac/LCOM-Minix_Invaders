@@ -16,6 +16,13 @@
 #include "../img/barrier/stage2.xpm"
 #include "../img/barrier/stage3.xpm"
 #include "../img/aliens/alien_shoot.xpm"
+#include "../img/menu/play.xpm"
+#include "../img/menu/play_highlight.xpm"
+#include "../img/menu/leaderboard.xpm"
+#include "../img/menu/leaderboard_highlight.xpm"
+#include "../img/menu/exit.xpm"
+#include "../img/menu/exit_highlight.xpm"
+#include "../img/menu/logo.xpm"
 #include "../img/symbols/heart_life.xpm"
 #include "../img/symbols/heart_nolife.xpm"
 #include "../img/symbols/n0.xpm"
@@ -47,6 +54,13 @@ Sprite *barrier_st0;
 Sprite *barrier_st1;
 Sprite *barrier_st2;
 Sprite *barrier_st3;
+Sprite *logo;
+Sprite *play;
+Sprite *leaderboard;
+Sprite *quit;
+Sprite *play_highlight;
+Sprite *leaderboard_highlight;
+Sprite *quit_highlight;
 Sprite *heart_life;
 Sprite *heart_nolife;
 Sprite *number_0;
