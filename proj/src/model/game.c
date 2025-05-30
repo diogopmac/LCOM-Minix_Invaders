@@ -16,6 +16,7 @@ Player *player;
 Alien *aliens[MAX_ALIENS];
 Barrier *barriers[MAX_BARRIERS];
 Projectile *projectiles[MAX_PROJECTILES];
+Entry *play_entry, *leaderboard_entry, *exit_entry;
 
 GameState game_state = GAME_STATE_MENU;
 
@@ -61,6 +62,9 @@ int game_loop() {
 
   createMenuSprites();
   mouse_cursor = createCursor(cursor);
+  play_entry = createEntry(300, 200, false, play);
+  leaderboard_entry = createEntry(300, 300, false, leaderboard);
+  exit_entry = createEntry(300, 400, false, quit);
 
   while (game_state != EXIT_GAME) {
     if ((driver_receive(ANY, &msg, &ipc_status)) != 0) {
@@ -74,6 +78,12 @@ int game_loop() {
             timer_int_handler();
             if (game_state == GAME_STATE_MENU) {
               if (mouse_dirty) {
+                if (drawEntry(play_entry) != 0)
+                  return 1;
+                if (drawEntry(leaderboard_entry) != 0)
+                  return 1;
+                if (drawEntry(exit_entry) != 0)
+                  return 1;
                 if (drawCursor(mouse_cursor) != 0)
                   return 1;
                 video_swap_buffer();
@@ -191,11 +201,43 @@ int game_loop() {
                 cursor_update_location(mouse_cursor, &mouse_packet);
                 mouse_dirty = true;
 
-                if (mouse_packet.rb) {
+                if ((play_entry->selected == false && 
+                    mouse_cursor->x >= play_entry->x && mouse_cursor->x <= play_entry->x + play_entry->sprite->width &&
+                    mouse_cursor->y >= play_entry->y && mouse_cursor->y <= play_entry->y + play_entry->sprite->height) ||
+                    (play_entry->selected == true &&
+                    (mouse_cursor->x < play_entry->x || mouse_cursor->x > play_entry->x + play_entry->sprite->width ||
+                    mouse_cursor->y < play_entry->y || mouse_cursor->y > play_entry->y + play_entry->sprite->height))) {
+                  toggleEntry(play_entry, play, play_highlight);
+                } 
+
+                if ((leaderboard_entry->selected == false && 
+                    mouse_cursor->x >= leaderboard_entry->x && mouse_cursor->x <= leaderboard_entry->x + leaderboard_entry->sprite->width &&
+                    mouse_cursor->y >= leaderboard_entry->y && mouse_cursor->y <= leaderboard_entry->y + leaderboard_entry->sprite->height) ||
+                    (leaderboard_entry->selected == true &&
+                    (mouse_cursor->x < leaderboard_entry->x || mouse_cursor->x > leaderboard_entry->x + leaderboard_entry->sprite->width ||
+                    mouse_cursor->y < leaderboard_entry->y || mouse_cursor->y > leaderboard_entry->y + leaderboard_entry->sprite->height))) {
+                  toggleEntry(leaderboard_entry, leaderboard, leaderboard_highlight);
+                }
+
+                if ((exit_entry->selected == false && 
+                    mouse_cursor->x >= exit_entry->x && mouse_cursor->x <= exit_entry->x + exit_entry->sprite->width &&
+                    mouse_cursor->y >= exit_entry->y && mouse_cursor->y <= exit_entry->y + exit_entry->sprite->height) ||
+                    (exit_entry->selected == true &&
+                    (mouse_cursor->x < exit_entry->x || mouse_cursor->x > exit_entry->x + exit_entry->sprite->width ||
+                    mouse_cursor->y < exit_entry->y || mouse_cursor->y > exit_entry->y + exit_entry->sprite->height))) {
+                  toggleEntry(exit_entry, quit, quit_highlight);
+                }
+
+                if (mouse_packet.lb && play_entry->selected) {
                   destroyCursor(mouse_cursor);
-                  /* destroyMenuSprites(); */
+                  destroyEntry(play_entry);
+                  destroyEntry(leaderboard_entry);
+                  destroyEntry(exit_entry);
                   mouse_cursor = NULL;
                   mouse_dirty = false;
+                  play_entry = NULL;
+                  leaderboard_entry = NULL;
+                  exit_entry = NULL;
 
                   game_state = GAME_STATE_PLAYING;
 
@@ -235,10 +277,16 @@ int game_loop() {
                   need_redraw = true;
                   break;
                 }
-                else if (mouse_packet.lb) {
+                else if (mouse_packet.lb && exit_entry->selected) {
                   destroyCursor(mouse_cursor);
+                  destroyEntry(play_entry);
+                  destroyEntry(leaderboard_entry);
+                  destroyEntry(exit_entry);
                   mouse_cursor = NULL;
                   mouse_dirty = false;
+                  play_entry = NULL;
+                  leaderboard_entry = NULL;
+                  exit_entry = NULL;
 
                   game_state = EXIT_GAME;
                   break;

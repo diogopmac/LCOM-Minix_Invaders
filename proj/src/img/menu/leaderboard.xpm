@@ -1,5 +1,5 @@
 /* XPM */
-static char * leaderboard_xpm[] = {
+static xpm_row_t const leaderboard_xpm[] = {
 "86 16 2 1",
 " 	c None",
 ".	c #FFFFFF",
