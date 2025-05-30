@@ -59,7 +59,6 @@ int damageAlien(Alien *alien) {
     if (alien != NULL) {
         alien->lives--;
         if (alien->lives <= 0) {
-            destroyAlien(alien);
             return 1;
         }
     }

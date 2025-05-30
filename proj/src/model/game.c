@@ -3,19 +3,38 @@
 
 #define MAX_ALIENS 18
 #define MAX_PROJECTILES 100
+#define MAX_BARRIERS 4
 
 extern uint8_t scancode;
 extern struct packet mouse_packet;
 extern int mouse_byte_index;
 extern unsigned int counter;
 int direction = 0; // 0 - left, 1 - down, 2 - right, 3 - down || ALIEN MOVEMENT
+int player_delta = 0;
 Cursor *mouse_cursor;
 Player *player;
 Alien *aliens[MAX_ALIENS];
-Barrier *barriers[4];
+Barrier *barriers[MAX_BARRIERS];
 Projectile *projectiles[MAX_PROJECTILES];
 
 GameState game_state = GAME_STATE_MENU;
+
+void exit_game() {
+  destroyPlayer(player);
+  for (int i = 0; i < MAX_ALIENS; i++) {
+    destroyAlien(aliens[i]);
+    aliens[i] = NULL;
+  }
+  for (int i = 0; i < 4; i++) {
+    destroyBarrier(barriers[i]);
+    barriers[i] = NULL;
+  }
+  for (int i = 0; i < MAX_PROJECTILES; i++) {
+    destroyProjectile(projectiles[i]);
+    projectiles[i] = NULL;
+  }
+  game_state = EXIT_GAME;
+}
 
 int game_loop() {
   int ipc_status;
@@ -84,12 +103,52 @@ int game_loop() {
               if (cooldown > 0) {
                 cooldown--;
               }
-              if (counter % 2 == 0) {
-                for (int i = 0; i < MAX_PROJECTILES; i++) {
-                  if (projectiles[i] != NULL) {
-                    projectileMove(projectiles[i]);
-                  }
+              if (counter % 2 == 0) { 
+                if (player != NULL) {
+                  playerMove(player, player_delta);
                 }
+                for (int i = 0; i < MAX_PROJECTILES; i++) {
+                  if (projectiles[i] != NULL && projectiles[i]->active && projectiles[i]->type == 'P') {
+                    projectileMove(projectiles[i]);
+                    for (int j = 0; j < MAX_ALIENS; j++) {
+                      if (aliens[j] != NULL && checkCollisionAlien(projectiles[i], aliens[j])) {
+                        if (damageAlien(aliens[j])) {
+                          draw_sprite(alien_explosion, aliens[j]->x, aliens[j]->y);
+                          destroyAlien(aliens[j]);
+                          aliens[j] = NULL;
+                        }
+                        destroyProjectile(projectiles[i]);
+                        projectiles[i] = NULL;
+                        goto hit;
+                      }
+                    }
+                  }
+                  else if (projectiles[i] != NULL && projectiles[i]->active && projectiles[i]->type == 'A') {
+                    projectileMove(projectiles[i]);
+                    if (checkCollisionPlayer(projectiles[i], player)) {
+                      if (damagePlayer(player)) {
+                        exit_game();
+                        goto exit;
+                      }
+                      destroyProjectile(projectiles[i]);
+                      projectiles[i] = NULL;
+                      goto hit;
+                    }
+                    for (int j = 0; j < MAX_BARRIERS; j++) {
+                      if (barriers[j] != NULL && checkCollisionBarrier(projectiles[i], barriers[j])) {
+                        if (damageBarrier(barriers[j])) {
+                          destroyBarrier(barriers[j]);
+                          barriers[j] = NULL;
+                        }
+                        destroyProjectile(projectiles[i]);
+                        projectiles[i] = NULL;
+                        goto hit;
+                      }
+                    }
+                  }
+                  
+                }
+              hit:
                 need_redraw = true;
               }
               if (need_redraw) {
@@ -101,11 +160,6 @@ int game_loop() {
                     drawAlien(aliens[i]);
                   }
                 }
-                for (int i = 0; i < 4; i++) {
-                  if (barriers[i] != NULL) {
-                    drawBarrier(barriers[i]);
-                  }
-                }
                 for (int i = 0; i < MAX_PROJECTILES; i++) {
                   if (projectiles[i] != NULL) {
                     if (!projectiles[i]->active) {
@@ -114,6 +168,11 @@ int game_loop() {
                     }
                     else
                       drawProjectile(projectiles[i]);
+                  }
+                }
+                for (int i = 0; i < 4; i++) {
+                  if (barriers[i] != NULL) {
+                    drawBarrier(barriers[i]);
                   }
                 }
                 video_swap_buffer();
@@ -190,11 +249,15 @@ int game_loop() {
           if ((msg.m_notify.interrupts & keyboard_bit_no) && game_state == GAME_STATE_PLAYING) {
             kbc_ih();
             if (scancode == MAKE_A) {
-              playerMove(player, -20);
+              player_delta = -8;
               need_redraw = true;
             }
             else if (scancode == MAKE_D) {
-              playerMove(player, 20);
+              player_delta = 8;
+              need_redraw = true;
+            }
+            else if (scancode == BREAK_A || scancode == BREAK_D) {
+              player_delta = 0;
               need_redraw = true;
             }
             else if (scancode == MAKE_SPACE && cooldown == 0) {
@@ -208,27 +271,15 @@ int game_loop() {
               }
             }
             else if (scancode == BREAK_ESC) {
-              destroyPlayer(player);
-              for (int i = 0; i < MAX_ALIENS; i++) {
-                destroyAlien(aliens[i]);
-                aliens[i] = NULL;
-              }
-              for (int i = 0; i < 4; i++) {
-                destroyBarrier(barriers[i]);
-                barriers[i] = NULL;
-              }
-              for (int i = 0; i < MAX_PROJECTILES; i++) {
-                destroyProjectile(projectiles[i]);
-                projectiles[i] = NULL;
-              }
-              game_state = EXIT_GAME;
-              break;
+              exit_game();
+              goto exit;
             }
           }
           break;
       }
     }
   }
+exit:
   if (mouse_subscribed) {
     if (mouse_unsubscribe_int() != 0)
       return 1;
