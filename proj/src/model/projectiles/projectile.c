@@ -38,11 +38,31 @@ void projectileMove(Projectile *projectile) {
         projectile->active = false; 
 }
 
-bool checkCollision(Projectile *projectile, Alien *alien) {
+bool checkCollisionAlien(Projectile *projectile, Alien *alien) {
   if (projectile->x < alien->x + alien->sprite->width &&
       projectile->x + projectile->sprite->width > alien->x &&
       projectile->y < alien->y + alien->sprite->height &&
       projectile->y + projectile->sprite->height > alien->y) {
+    return true;
+  }
+  return false;
+}
+
+bool checkCollisionBarrier(Projectile *projectile, Barrier *barrier) {
+  if (projectile->x < barrier->x + barrier->sprite->width &&
+      projectile->x + projectile->sprite->width > barrier->x &&
+      projectile->y < barrier->y + barrier->sprite->height &&
+      projectile->y + projectile->sprite->height > barrier->y) {
+    return true;
+  }
+  return false;
+}
+
+bool checkCollisionPlayer(Projectile *projectile, Player *player) {
+  if (projectile->x < player->x + player->sprite->width &&
+      projectile->x + projectile->sprite->width > player->x &&
+      projectile->y < player->y + player->sprite->height &&
+      projectile->y + projectile->sprite->height > player->y) {
     return true;
   }
   return false;
