@@ -278,7 +278,7 @@ int game_loop() {
               game_menu();
             }
             else if (game_state == GAME_STATE_PLAYING) {
-              if (counter % 60 == 0) {
+              if (counter % 45 == 0) {
                 alien_tick();
               }
               if (cooldown > 0) {
