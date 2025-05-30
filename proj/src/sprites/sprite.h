@@ -22,6 +22,7 @@
 #include "../img/menu/leaderboard_highlight.xpm"
 #include "../img/menu/exit.xpm"
 #include "../img/menu/exit_highlight.xpm"
+#include "../img/menu/logo.xpm"
 
 typedef struct {
     uint32_t *colors;
@@ -41,6 +42,7 @@ Sprite *barrier_st0;
 Sprite *barrier_st1;
 Sprite *barrier_st2;
 Sprite *barrier_st3;
+Sprite *logo;
 Sprite *play;
 Sprite *leaderboard;
 Sprite *quit;

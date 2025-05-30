@@ -43,6 +43,7 @@ void (destroy_sprite)(Sprite *sprite) {
 
 void (createMenuSprites)() {
     cursor = create_sprite(cursor_xpm);
+    logo = create_sprite(logo_xpm);
     play = create_sprite(play_xpm);
     play_highlight = create_sprite(play_highlight_xpm);
     leaderboard = create_sprite(leaderboard_xpm);
