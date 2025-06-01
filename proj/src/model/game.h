@@ -19,6 +19,15 @@ typedef enum {
     EXIT_GAME
 } GameState;
 
+/**
+ * @brief Main game loop that handles all game logic, rendering, and input processing.
+ *
+ * This function initializes the game, subscribes to necessary interrupts, and enters the main event loop.
+ * It processes timer, keyboard, and mouse events, updates the game state, and manages transitions between
+ * different game states (menu, playing, game over, exit).
+ *
+ * @return 0 on success, non-zero on failure.
+ */
 int game_loop();
 void game_update();
 void game_render();

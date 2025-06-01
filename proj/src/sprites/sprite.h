@@ -80,17 +80,65 @@ Sprite *score_text;
 Sprite *lives_text;
 Sprite *wave_text;
 
-Sprite * (create_sprite)(xpm_map_t xpm);
-int (draw_sprite)(Sprite *sprite, uint16_t x, uint16_t y);
-void (destroy_sprite)(Sprite *sprite);
+/**
+ * Creates a sprite from an XPM map.
+ *
+ * @param xpm The XPM map to load the sprite from.
+ * @return Pointer to the created Sprite, or NULL on failure.
+ */
+Sprite *create_sprite(xpm_map_t xpm);
 
+/**
+ * Draws a sprite at the specified coordinates.
+ * 
+ * @param sprite Pointer to the Sprite to draw.
+ * @param x The x-coordinate where the sprite should be drawn.
+ * @param y The y-coordinate where the sprite should be drawn.
+ * @return 0 on success, non-zero on failure.
+ */
+int draw_sprite(Sprite *sprite, uint16_t x, uint16_t y);
+
+/**
+ * Frees the memory allocated for a sprite.
+ *
+ * @param sprite Pointer to the Sprite to destroy.
+ */
+void destroy_sprite(Sprite *sprite);
+
+/**
+ * Retrieves the sprite corresponding to a digit character.
+ * 
+ * @param digit The digit character.
+ * @return Pointer to the corresponding digit Sprite, or NULL if invalid.
+ */
 Sprite *get_digit_sprite(char digit);
 
-void (createMenuSprites)();
-void (destroyMenuSprites)();
+/**
+ * Creates all menu-related sprites.
+ */
+void createMenuSprites();
 
-void (createGameSprites)();
-void (destroyGameSprites)();
+/**
+ * Destroys all menu-related sprites.
+ */
+void destroyMenuSprites();
 
-void (createGameOverSprites)();
-void (destroyGameOverSprites)();
+/**
+ * Creates all game-related sprites.
+ */
+void createGameSprites();
+
+/**
+ * Destroys all game-related sprites.
+ */
+void destroyGameSprites();
+
+/**
+ * Creates all game over screen sprites.
+ */
+void createGameOverSprites();
+
+/**
+ * Destroys all game over screen sprites.
+ */
+void destroyGameOverSprites();
